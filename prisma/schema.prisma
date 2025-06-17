@@ -27,14 +27,15 @@ model User {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   refreshTokens    RefreshToken[]
-  profile       UserProfile?
-  children      Child[]
+  profile          UserProfile?
+  children         Child[]
+  bookings         Booking[]
 }
 
 model UserProfile {
-  id               Int     @id @default(autoincrement())
-  user             User    @relation(fields: [userId], references: [id])
-  userId           Int     @unique
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 
   address          String?
   city             String?
@@ -44,14 +45,14 @@ model UserProfile {
   areaOfInterest   String?
   relationToChild  String?
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Child {
-  id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [id])
-  userId    Int
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
   name      String
   age       Int
@@ -60,7 +61,6 @@ model Child {
 
   createdAt DateTime @default(now())
 }
-
 
 enum Role {
   USER
@@ -73,7 +73,6 @@ enum Gender {
   OTHER
 }
 
-
 model RefreshToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
@@ -83,21 +82,65 @@ model RefreshToken {
   createdAt DateTime @default(now())
   revoked   Boolean  @default(false)
 
-  replacedById   Int? 
+  replacedById   Int?
   replacedBy     RefreshToken?  @relation("ReplacedBy", fields: [replacedById], references: [id])
-  replacedTokens RefreshToken[] @relation("ReplacedBy") 
+  replacedTokens RefreshToken[] @relation("ReplacedBy")
 
-  parentTokenId Int? 
+  parentTokenId Int?
   parentToken   RefreshToken?  @relation("ParentToken", fields: [parentTokenId], references: [id])
-  childTokens   RefreshToken[] @relation("ParentToken") 
+  childTokens   RefreshToken[] @relation("ParentToken")
 }
 
-model Seminar{
-  id                  String   @id @default(uuid())
-  title               String
-  description         String
-  date                DateTime
-  location            String
-  createdAt            DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+model Seminar {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  time        String // stored as string (e.g., "10:30 AM")
+  duration    Int // in minutes
+  location    String
+  price       Decimal
+  capacity    Int
+  status      SeminarStatus @default(UPCOMING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  bookings Booking[]
+}
+
+enum SeminarStatus {
+  ONGOING
+  UPCOMING
+  COMPLETED
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  seminar    Seminar  @relation(fields: [seminarId], references: [id])
+  seminarId  String
+  quantity   Int      @default(1)
+  totalPrice Decimal
+  status     BookingStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+  tickets    Ticket[]
+
+  razorpayPaymentId String?
+  razorpayOrderId   String?
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  bookingId String
+  ticketCode String  @unique
+  createdAt DateTime @default(now())
+}
+
+enum BookingStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
 }

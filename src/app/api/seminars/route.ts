@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { seminarSchema } from "@/schemas/seminarSchema";
 import { prisma } from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
 
 export async function POST(req : NextRequest) {
-    const token = req.cookies.get("token")?.value
+    const token = req.cookies.get("accessToken")?.value
 
     if(!token){
         return NextResponse.json({
@@ -16,7 +17,7 @@ export async function POST(req : NextRequest) {
     }
 
     const user = await verifyJWT(token);
-     if(user.role !== "ADMIN"){
+     if(!user || user.role !== "ADMIN"){
         return NextResponse.json({
             success : false,
             message : "Forbidden"
@@ -42,8 +43,14 @@ export async function POST(req : NextRequest) {
           data : {
             title : body.title,
             description : body.description,
-            date : body.date,
-            location : body.location
+            date : new Date(body.date),     
+            time : body.time,
+            duration : Number(body.duration),
+            location : body.location,
+            price : new Prisma.Decimal(body.price),
+            capacity : Number(body.capacity),
+            status : body.status,
+           
           },
      })
          return NextResponse.json(seminar);
