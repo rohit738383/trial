@@ -9,13 +9,16 @@ type ProfileCompletion = {
 
 type User = {
   id: number;
+  fullName: string;
   username: string;
+  phoneNumber: string;
   email: string;
   role: string;
   isVerified: boolean;
   avatar: string;
   profileCompletion: ProfileCompletion;
   children: any[];
+
 };
 
 type AuthStore = {
@@ -40,11 +43,12 @@ export const useAuthStore = create<AuthStore>()(
 
       fetchUser: async () => {
         try {
-          
           const res = await axios.get("/api/me", {
             method: "GET",
             withCredentials: true,
           });
+
+          console.log("res", res)
 
           if (!res.data.user) {
             console.error("Failed to fetch user:", res.status);

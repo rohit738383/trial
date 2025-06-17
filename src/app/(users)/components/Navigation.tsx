@@ -29,8 +29,9 @@ export const Navigation =() => {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const router = useRouter()
-
+  
   const user = useAuthStore((state) => state.user)
+  console.log(user)
   const clearUser = useAuthStore((state) => state.clearUser)
   const fetchUser = useAuthStore((state) => state.fetchUser)
 
@@ -162,97 +163,99 @@ export const Navigation =() => {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <SheetHeader>
-              <SheetTitle className="flex items-center space-x-2">
-                <Brain className="h-6 w-6 text-blue-600" />
-                <span>Studytainment</span>
-              </SheetTitle>
-              <SheetDescription>Navigate through our educational platform</SheetDescription>
-            </SheetHeader>
+          <SheetContent side="right" className="w-[300px] sm:w-[400px] p-0">
+            <div className="h-full overflow-y-auto pb-20">
+              <SheetHeader className="p-6">
+                <SheetTitle className="flex items-center space-x-2">
+                  <Brain className="h-6 w-6 text-blue-600" />
+                  <span>Studytainment</span>
+                </SheetTitle>
+                <SheetDescription>Navigate through our educational platform</SheetDescription>
+              </SheetHeader>
 
-            {isClient && user && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3 mb-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.username} />
-                    <AvatarFallback className="bg-blue-600 text-white">{getInitials(user.username)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{user.username}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
-                  </div>
-                </div>
-                {!isLoading && (
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">Profile Completion</span>
-                      <span className="text-xs text-gray-500">{profileCompletion}%</span>
+              {isClient && user && (
+                <div className="px-6">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.username} />
+                      <AvatarFallback className="bg-blue-600 text-white">{getInitials(user.username)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{user.username}</p>
+                      <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
-                    <Progress value={profileCompletion} className="h-2" />
-                    {profileCompletion !== null && profileCompletion < 100 && (
-  <Link href="/services/complete-profile">
-    <Button
-      variant="ghost"
-      size="sm"
-      className="w-full mt-2 text-blue-600 hover:text-blue-700"
-    >
-      Complete Profile
-    </Button>
-  </Link>
-)}
-
                   </div>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-red-600 hover:text-red-700"
-                  onClick={() => {
-                    handleLogout()
-                    setIsOpen(false)
-                  }}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </div>
-            )}
+                  {!isLoading && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">Profile Completion</span>
+                        <span className="text-xs text-gray-500">{profileCompletion}%</span>
+                      </div>
+                      <Progress value={profileCompletion} className="h-2" />
+                      {profileCompletion !== null && profileCompletion < 100 && (
+    <Link href="/services/complete-profile">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="w-full mt-2 text-blue-600 hover:text-blue-700"
+      >
+        Complete Profile
+      </Button>
+    </Link>
+  )}
 
-            {/* Mobile nav links */}
-            <nav className="flex flex-col space-y-4 mt-6">
-              <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
-              <Link href="/about" onClick={() => setIsOpen(false)} className="text-lg font-medium">About Us</Link>
-              <div className="space-y-2">
-                <p className="text-lg font-medium text-gray-900">Our Services</p>
-                <div className="pl-4 space-y-2">
-                  {services.map((service) => (
-                    <Link
-                      key={service.name}
-                      href={service.href}
-                      onClick={() => setIsOpen(false)}
-                      className="block text-gray-600 hover:text-blue-600"
-                    >
-                      {service.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">Why Choose Us</Link>
-              <Link href="/seminars" onClick={() => setIsOpen(false)} className="text-lg font-medium">Seminars & Events</Link>
-              <Link href="/contact" onClick={() => setIsOpen(false)} className="text-lg font-medium">Contact Us</Link>
-              <Link href="/careers" onClick={() => setIsOpen(false)} className="text-lg font-medium">Careers</Link>
-              {!user && (
-                <div className="flex flex-col space-y-2 pt-4 border-t">
-                  <Link href="/sign-in" onClick={() => setIsOpen(false)}>
-                    <Button variant="outline" className="w-full">Login</Button>
-                  </Link>
-                  <Link href="/sign-up" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">Join Now</Button>
-                  </Link>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-red-600 hover:text-red-700"
+                    onClick={() => {
+                      handleLogout()
+                      setIsOpen(false)
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
                 </div>
               )}
-            </nav>
+
+              {/* Mobile nav links */}
+              <nav className="flex flex-col space-y-4 px-6">
+                <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
+                <Link href="/about" onClick={() => setIsOpen(false)} className="text-lg font-medium">About Us</Link>
+                <div className="space-y-2">
+                  <p className="text-lg font-medium text-gray-900">Our Services</p>
+                  <div className="pl-4 space-y-2">
+                    {services.map((service) => (
+                      <Link
+                        key={service.name}
+                        href={service.href}
+                        onClick={() => setIsOpen(false)}
+                        className="block text-gray-600 hover:text-blue-600"
+                      >
+                        {service.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+                <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">Why Choose Us</Link>
+                <Link href="/seminars" onClick={() => setIsOpen(false)} className="text-lg font-medium">Seminars & Events</Link>
+                <Link href="/contact" onClick={() => setIsOpen(false)} className="text-lg font-medium">Contact Us</Link>
+                <Link href="/careers" onClick={() => setIsOpen(false)} className="text-lg font-medium">Careers</Link>
+                {!user && (
+                  <div className="flex flex-col space-y-2 pt-4 border-t">
+                    <Link href="/sign-in" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" className="w-full">Login</Button>
+                    </Link>
+                    <Link href="/sign-up" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">Join Now</Button>
+                    </Link>
+                  </div>
+                )}
+              </nav>
+            </div>
           </SheetContent>
         </Sheet>
       </div>

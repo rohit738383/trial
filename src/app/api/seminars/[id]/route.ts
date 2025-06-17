@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { seminarSchema } from "@/schemas/seminarSchema";
 import { prisma } from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
 
 export async function PUT(req : NextRequest , {params} : {params :{id : string}}){
-    const token = req.cookies.get("token")?.value
+    const token = req.cookies.get("accessToken")?.value
 
     if(!token){
         return NextResponse.json({
@@ -16,7 +17,7 @@ export async function PUT(req : NextRequest , {params} : {params :{id : string}}
     }
 
     const user = await verifyJWT(token);
-    if(user.role !== "ADMIN"){
+    if(!user || user.role !== "ADMIN"){
         return NextResponse.json({
             success : false,
             message : "Forbidden"
@@ -46,8 +47,13 @@ export async function PUT(req : NextRequest , {params} : {params :{id : string}}
     data : {
         title : body.title,
         description : body.description,
-        date: new Date(body.date),
-        location: body.location,
+        date : new Date(body.date),     
+        time : body.time,
+        duration : Number(body.duration),
+        location : body.location,
+        price : new Prisma.Decimal(body.price),
+        capacity : Number(body.capacity),
+        status : body.status,
     },
    })
   
@@ -56,7 +62,7 @@ export async function PUT(req : NextRequest , {params} : {params :{id : string}}
 
 
 export async function DELETE(req : NextRequest , {params} : {params :{id : string}}){{
-   const token = req.cookies.get("token")?.value
+   const token = req.cookies.get("accessToken")?.value
 
    if(!token){
     return NextResponse.json({
@@ -68,7 +74,7 @@ export async function DELETE(req : NextRequest , {params} : {params :{id : strin
    }
    
    const user = await verifyJWT(token);
-   if(user.role !== "ADMIN"){
+   if(!user || user.role !== "ADMIN"){
     return NextResponse.json({
         success : false,
         message : "Forbidden"
