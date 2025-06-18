@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Rocket, Heart, Users, Zap, TrendingUp, Coffee, Laptop, Github, Twitter, Linkedin } from "lucide-react"
+import { Rocket, Heart, Users, Zap, TrendingUp, Coffee, Laptop} from "lucide-react"
 
 export default function CareersPage() {
   return (
@@ -41,7 +41,7 @@ export default function CareersPage() {
       </section>
 
       {/* Why Join Us */}
-      <section className="py-16 sm:py-24 bg-white dark:bg-gray-900">
+      <section className="py-16  bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Why Join Us?</h2>
@@ -62,7 +62,7 @@ export default function CareersPage() {
               {
                 icon: TrendingUp,
                 title: "Grow Together",
-                description: "Learn new skills and advance your career in the EdTech industry.",
+                description: "Learn new skills and advance your career.",
               },
             ].map((item, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-all duration-300">
@@ -107,8 +107,9 @@ export default function CareersPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Coffee, title: "Flexible Work", description: "Work from home or office" },
+              { icon: Coffee, title: "Flexible Work", description: "Work when you're most productive" },
               { icon: Laptop, title: "Good Equipment", description: "Latest tools and technology" },
+              { icon: TrendingUp, title: "Growth Opportunities", description: "We offer real chances to take on new challenges and grow in your role." },
               { icon: Heart, title: "Good Culture", description: "Friendly and supportive team" },
             ].map((perk, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-all duration-300">
@@ -131,16 +132,15 @@ export default function CareersPage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
               <div className="flex items-center gap-2 mb-2">
-                <Rocket className="h-6 w-6 text-purple-500" />
+             
                 <h3 className="text-xl font-bold">Studytainment</h3>
               </div>
               <p className="text-gray-400 text-sm">Making learning fun and engaging.</p>
             </div>
-
           </div>
 
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400 text-sm">© 2024 Studytainment. Made with ❤️ in India</p>
+            <p className="text-gray-400 text-sm">© 2025 Studytainment. Made with ❤️ in India</p>
           </div>
         </div>
       </footer>
