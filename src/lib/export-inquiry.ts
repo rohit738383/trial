@@ -1,10 +1,7 @@
-'use client'
-
-
 import jsPDF from "jspdf"
 import "jspdf-autotable"
 
-
+// Extend jsPDF type to include autoTable
 declare module "jspdf" {
   interface jsPDF {
     autoTable: (options: any) => jsPDF
@@ -29,7 +26,7 @@ export class ExportService {
       ...rows.map((row) =>
         row
           .map((cell) => {
-         
+            // Escape quotes and wrap in quotes if contains comma
             const cellStr = String(cell)
             if (cellStr.includes(",") || cellStr.includes('"') || cellStr.includes("\n")) {
               return `"${cellStr.replace(/"/g, '""')}"`
@@ -40,7 +37,7 @@ export class ExportService {
       ),
     ].join("\n")
 
- 
+    // Create and download file
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const link = document.createElement("a")
 
@@ -55,21 +52,21 @@ export class ExportService {
     }
   }
 
-
+  // PDF Export
   static exportToPDF(data: ExportData): void {
     const { headers, rows, title, filename } = data
 
     const doc = new jsPDF()
 
-
+    // Add title
     doc.setFontSize(20)
     doc.text(title, 20, 20)
 
-  
+    // Add generation date
     doc.setFontSize(10)
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 30)
 
-
+    // Add table
     doc.autoTable({
       head: [headers],
       body: rows,
@@ -89,11 +86,11 @@ export class ExportService {
       margin: { top: 40 },
     })
 
-
+    // Save the PDF
     doc.save(`${filename}.pdf`)
   }
 
-
+  // Export seminars data
   static exportSeminarsData(seminars: any[], format: "csv" | "pdf"): void {
     const headers = ["Title", "Instructor", "Date", "Time", "Duration", "Price", "Capacity", "Enrolled", "Status"]
 
@@ -123,6 +120,7 @@ export class ExportService {
     }
   }
 
+  // Export bookings data
   static exportBookingsData(bookings: any[], format: "csv" | "pdf"): void {
     const headers = [
       "Booking ID",
@@ -162,7 +160,7 @@ export class ExportService {
     }
   }
 
-
+  // Export users data
   static exportUsersData(users: any[], format: "csv" | "pdf"): void {
     const headers = ["Name", "Email", "Join Date", "Total Bookings", "Total Spent", "Last Login", "Status"]
 
@@ -189,6 +187,42 @@ export class ExportService {
       this.exportToPDF(exportData)
     }
   }
+
+  // Export inquiries data
+  static exportInquiriesData(inquiries: any[], format: "csv" | "pdf"): void {
+    const headers = [
+      "Full Name",
+      "Email",
+      "Phone Number",
+      "Inquiry Type",
+      "Subject",
+      "Message",
+      "Status",
+      "Date Submitted",
+    ]
+
+    const rows = inquiries.map((inquiry) => [
+      inquiry.fullName,
+      inquiry.email,
+      inquiry.phoneNumber,
+      inquiry.inquiryType,
+      inquiry.subject,
+      inquiry.message,
+      inquiry.status.replace("-", " "),
+      inquiry.createdAt,
+    ])
+
+    const exportData: ExportData = {
+      headers,
+      rows,
+      title: "Inquiries Report",
+      filename: `inquiries-report-${new Date().toISOString().split("T")[0]}`,
+    }
+
+    if (format === "csv") {
+      this.exportToCSV(exportData)
+    } else {
+      this.exportToPDF(exportData)
+    }
+  }
 }
-
-

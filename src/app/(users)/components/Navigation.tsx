@@ -95,8 +95,8 @@ export const Navigation =() => {
           </DropdownMenu>
           <Link href="/why-choose-us" className="hover:text-blue-600">Why Choose Us</Link>
           <Link href="/seminars" className="hover:text-blue-600">Seminars & Events</Link>
-          <Link href="/contact" className="hover:text-blue-600">Contact Us</Link>
-          <Link href="/careers" className="hover:text-blue-600">Careers</Link>
+          <Link href="/contact-form" className="hover:text-blue-600">Contact Us</Link>
+          <Link href="/career" className="hover:text-blue-600">Careers</Link>
         </nav>
 
         {/* Desktop Auth */}
