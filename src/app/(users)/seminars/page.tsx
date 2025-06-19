@@ -19,7 +19,7 @@ import {
   Clock,
   MapPin,
   Users,
-  DollarSign,
+  IndianRupee,
   CheckCircle,
   Sparkles,
   Trophy,
@@ -105,7 +105,7 @@ function SeminarCard({
   const isOngoing = seminar.status === "ONGOING";
   const isUpcoming = seminar.status === "UPCOMING";
   const isCompleted = seminar.status === "COMPLETED";
-  const user = useAuthStore((state) => state.user);
+  // const user = useAuthStore((state) => state.user);
 
 
   const getStatusConfig = () => {
@@ -264,19 +264,19 @@ function SeminarCard({
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="flex items-center space-x-2 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
-              <div className="p-2 rounded-full bg-yellow-100">
-                <DollarSign className="w-4 h-4 text-yellow-600" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex w-[90px] items-center space-x-2 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+              <div className=" rounded-full bg-yellow-100">
+                <IndianRupee className="w-4 h-4 text-yellow-600" />
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">Price</p>
                 <p className="text-sm font-bold text-yellow-700">
-                  ${seminar.price}
+                ₹{seminar.price}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 p-3 rounded-lg bg-indigo-50 border border-indigo-200">
+            <div className="flex w-[90px] items-center space-x-2 p-3 rounded-lg bg-indigo-50 border border-indigo-200">
               <div className="p-2 rounded-full bg-indigo-100">
                 <Users className="w-4 h-4 text-indigo-600" />
               </div>
@@ -287,7 +287,7 @@ function SeminarCard({
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 p-3 rounded-lg bg-rose-50 border border-rose-200">
+            <div className="flex w-[105px] items-center space-x-2 p-3 rounded-lg bg-rose-50 border border-rose-200">
               <div className="p-2 rounded-full bg-rose-100">
                 <Clock className="w-4 h-4 text-rose-600" />
               </div>
@@ -920,7 +920,7 @@ export default function SeminarPage() {
                   <div className="flex justify-between items-center text-sm text-gray-600">
                     <span>Price per seat:</span>
                     <span className="font-semibold">
-                      ${selectedSeminar?.price}
+                    ₹{selectedSeminar?.price}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-sm text-gray-600">
@@ -933,7 +933,7 @@ export default function SeminarPage() {
                         Total Amount:
                       </span>
                       <span className="text-2xl font-bold text-yellow-600">
-                        ${totalPrice}
+                      ₹{totalPrice}
                       </span>
                     </div>
                   </div>
@@ -964,3 +964,8 @@ export default function SeminarPage() {
     </div>
   );
 }
+
+
+
+
+

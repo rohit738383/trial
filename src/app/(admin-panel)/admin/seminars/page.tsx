@@ -233,6 +233,7 @@ export default function SeminarsPage() {
                   <Textarea
                     id="description"
                     value={formData.description}
+                    style={{maxWidth: "465px"}}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }

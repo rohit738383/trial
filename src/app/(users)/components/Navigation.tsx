@@ -242,8 +242,8 @@ export const Navigation =() => {
                 </div>
                 <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">Why Choose Us</Link>
                 <Link href="/seminars" onClick={() => setIsOpen(false)} className="text-lg font-medium">Seminars & Events</Link>
-                <Link href="/contact" onClick={() => setIsOpen(false)} className="text-lg font-medium">Contact Us</Link>
-                <Link href="/careers" onClick={() => setIsOpen(false)} className="text-lg font-medium">Careers</Link>
+                <Link href="/contact-form" onClick={() => setIsOpen(false)} className="text-lg font-medium">Contact Us</Link>
+                <Link href="/career" onClick={() => setIsOpen(false)} className="text-lg font-medium">Careers</Link>
                 {!user && (
                   <div className="flex flex-col space-y-2 pt-4 border-t">
                     <Link href="/sign-in" onClick={() => setIsOpen(false)}>
