@@ -48,19 +48,20 @@ export const useAuthStore = create<AuthStore>()(
             withCredentials: true,
           });
 
-          console.log("res", res)
-
           if (!res.data.user) {
-            console.error("Failed to fetch user:", res.status);
             set({ user: null });
             return;
           }
 
           set({ user: res.data.user });
         } catch (error) {
-          
-          console.error("Error in fetchUser:", error);
-          set({ user: null });
+           if(axios.isAxiosError(error) && error.response && error.response.status === 404){
+            set({ user: null });
+           }
+           else{
+            console.error("Error in fetchUser:", error);
+            set({ user: null });
+           }
         }
       },
 

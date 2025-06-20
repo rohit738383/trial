@@ -294,7 +294,7 @@ export default function SeminarsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price ($)</Label>
+                    <Label htmlFor="price">Price (₹)</Label>
                     <Input
                       id="price"
                       type="number"
@@ -397,7 +397,7 @@ export default function SeminarsPage() {
                     {Math.floor(seminar.duration / 60)}h {seminar.duration % 60}
                     m
                   </TableCell>
-                  <TableCell>${Number(seminar.price).toFixed(2)}</TableCell>
+                  <TableCell>₹{Number(seminar.price).toFixed(2)}</TableCell>
                   <TableCell>{seminar.capacity}</TableCell>
                   <TableCell>
                     <Badge
@@ -530,7 +530,7 @@ export default function SeminarsPage() {
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label htmlFor="edit-price">Price ($)</Label>
+                                  <Label htmlFor="edit-price">Price (₹)</Label>
                                   <Input
                                     id="edit-price"
                                     type="number"
