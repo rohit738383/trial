@@ -120,3 +120,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 12s linear infinite;
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .animate-marquee {
+    animation: marquee 8s linear infinite;
+  }
+}
