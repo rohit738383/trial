@@ -47,7 +47,7 @@ const SignInPage = () => {
         description: response.data.message,
       })
 
-      router.push("/homepage")
+      router.push("/")
     } catch (error) {
       const errorMesssage = axios.isAxiosError(error)
         ? error.response?.data.message || "Something went wrong"

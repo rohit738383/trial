@@ -196,7 +196,7 @@ export default function CompleteProfile() {
       useAuthStore.getState().setUser(data.user);
       console.log(" User updated after submit:", useAuthStore.getState().user);
   
-      router.replace("/homepage");
+      router.replace("/");
     } catch (err: any) {
       toast.error("Profile update failed",{
         description: err.message,
