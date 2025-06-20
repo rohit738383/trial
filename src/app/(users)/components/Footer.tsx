@@ -1,5 +1,8 @@
+'use client'
+
 import { GraduationCap, Download, Facebook, Twitter, Instagram, Youtube, Mail, Phone,} from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 
 const Footer = () => {
 
@@ -62,14 +65,14 @@ const Footer = () => {
             <div>
               <h4 className="font-semibold mb-4">Download App</h4>
               <div className="space-y-3">
-                <div className="bg-gray-800 p-3 rounded-lg flex items-center space-x-3 cursor-pointer hover:bg-gray-700">
+                <div onClick={() => toast.info("Coming soon on Google Play!")} className="bg-gray-800 p-3 rounded-lg flex items-center space-x-3 cursor-pointer hover:bg-gray-700">
                   <Download className="h-6 w-6" />
                   <div>
                     <div className="text-xs text-gray-400">Download on</div>
                     <div className="font-semibold">Google Play</div>
                   </div>
                 </div>
-                <div className="bg-gray-800 p-3 rounded-lg flex items-center space-x-3 cursor-pointer hover:bg-gray-700">
+                <div onClick={() => toast.info("Coming soon on the App Store!")} className="bg-gray-800 p-3 rounded-lg flex items-center space-x-3 cursor-pointer hover:bg-gray-700">
                   <Download className="h-6 w-6" />
                   <div>
                     <div className="text-xs text-gray-400">Download on</div>

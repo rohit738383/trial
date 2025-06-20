@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Brain, ChevronDown, Menu, LogOut } from "lucide-react"
+import { toast } from "sonner"
 
 import { useAuthStore } from "@/stores/useAuthStore"
 import { Button } from "@/components/ui/button"
@@ -68,6 +69,15 @@ export const Navigation =() => {
 
   const isLoading = user && profileCompletion === undefined
 
+  const handleServiceClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      router.push("/sign-up");
+      return;
+    }
+    toast.info("Coming Soon");
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 justify-between">
@@ -88,7 +98,7 @@ export const Navigation =() => {
             <DropdownMenuContent align="start" className="w-56">
               {services.map((service) => (
                 <DropdownMenuItem key={service.name} asChild>
-                  <Link href={service.href}>{service.name}</Link>
+                  <Link href={service.href} onClick={handleServiceClick}>{service.name}</Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -232,7 +242,7 @@ export const Navigation =() => {
                       <Link
                         key={service.name}
                         href={service.href}
-                        onClick={() => setIsOpen(false)}
+                        onClick={(e) => { handleServiceClick(e); setIsOpen(false); }}
                         className="block text-gray-600 hover:text-blue-600"
                       >
                         {service.name}
