@@ -9,7 +9,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Filter, MessageSquare, Phone, Mail, Clock, CheckCircle, AlertCircle, Edit } from "lucide-react"
-import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
+// import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
 // import { ExportService } from "@/lib/export-inquiry"
 import {
   Dialog,

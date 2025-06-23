@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Edit, Trash2, Calendar } from "lucide-react";
 import { toast } from "sonner";
-import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown";
+// import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown";
 // import { ExportService } from "@/lib/export-utils";
 import axiosInstance from "@/lib/axiosInstance";
 import { seminarSchema } from "@/schemas/seminarSchema";
