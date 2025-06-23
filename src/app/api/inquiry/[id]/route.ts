@@ -7,8 +7,17 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-    const token = req.cookies.get("accessToken")?.value
+type Context = {
+    params: {
+        id: string;
+    };
+};
+
+export async function PUT(
+    request: NextRequest,
+    context: Context
+) {
+    const token = request.cookies.get("accessToken")?.value
 
     if(!token){
         return NextResponse.json({
@@ -28,11 +37,11 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     )
     }
 
-    const {status} = updateSchema.parse(await req.json())
+    const {status} = updateSchema.parse(await request.json())
 
-     const id = params.id.replace(/[{}]/g, "")
+    const id = context.params.id.replace(/[{}]/g, "")
 
-     const inquiry = await prisma.inquiry.update({
+    const inquiry = await prisma.inquiry.update({
         where : {id},
         data : {status}
     })
