@@ -7,6 +7,7 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function PUT(
     request: NextRequest,
     context: any
