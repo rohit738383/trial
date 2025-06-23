@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,7 +9,6 @@ datasource db {
 
 model User {
   id               Int            @id @default(autoincrement())
-  fullName         String
   username         String         @unique
   phoneNumber      String         @unique
   email            String         @unique
@@ -26,17 +19,16 @@ model User {
   role             Role           @default(USER)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  fullName         String
+  bookings         Booking[]
+  children         Child[]
   refreshTokens    RefreshToken[]
   profile          UserProfile?
-  children         Child[]
-  bookings         Booking[]
 }
 
 model UserProfile {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
-
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
   address          String?
   city             String?
   state            String?
@@ -44,22 +36,88 @@ model UserProfile {
   highestEducation String?
   areaOfInterest   String?
   relationToChild  String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  user             User     @relation(fields: [userId], references: [id])
 }
 
 model Child {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
-
+  id        Int      @id @default(autoincrement())
+  userId    Int
   name      String
   age       Int
-  gender    Gender
   className String
-
   createdAt DateTime @default(now())
+  gender    Gender
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model RefreshToken {
+  id             Int            @id @default(autoincrement())
+  token          String         @unique
+  userId         Int
+  expiresAt      DateTime
+  createdAt      DateTime       @default(now())
+  revoked        Boolean        @default(false)
+  replacedById   Int?
+  parentTokenId  Int?
+  parentToken    RefreshToken?  @relation("ParentToken", fields: [parentTokenId], references: [id])
+  childTokens    RefreshToken[] @relation("ParentToken")
+  replacedBy     RefreshToken?  @relation("ReplacedBy", fields: [replacedById], references: [id])
+  replacedTokens RefreshToken[] @relation("ReplacedBy")
+  user           User           @relation(fields: [userId], references: [id])
+}
+
+model Seminar {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  location    String
+  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime      @default(now())
+  capacity    Int
+  duration    Int
+  price       Decimal
+  status      SeminarStatus @default(UPCOMING)
+  time        String
+  bookings    Booking[]
+}
+
+model Booking {
+  id                String        @id @default(cuid())
+  userId            Int
+  seminarId         String
+  createdAt         DateTime      @default(now())
+  quantity          Int           @default(1)
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  status            BookingStatus @default(PENDING)
+  totalPrice        Decimal
+  seminar           Seminar       @relation(fields: [seminarId], references: [id])
+  user              User          @relation(fields: [userId], references: [id])
+  tickets           Ticket[]
+}
+
+model Ticket {
+  id         String   @id @default(cuid())
+  bookingId  String
+  ticketCode String   @unique
+  createdAt  DateTime @default(now())
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+}
+
+model Inquiry {
+  id          String        @id @default(uuid())
+  fullName    String
+  email       String
+  phoneNumber String
+  inquiryType String
+  subject     String
+  message     String
+  status      InquiryStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 enum Role {
@@ -73,69 +131,10 @@ enum Gender {
   OTHER
 }
 
-model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  revoked   Boolean  @default(false)
-
-  replacedById   Int?
-  replacedBy     RefreshToken?  @relation("ReplacedBy", fields: [replacedById], references: [id])
-  replacedTokens RefreshToken[] @relation("ReplacedBy")
-
-  parentTokenId Int?
-  parentToken   RefreshToken?  @relation("ParentToken", fields: [parentTokenId], references: [id])
-  childTokens   RefreshToken[] @relation("ParentToken")
-}
-
-model Seminar {
-  id          String        @id @default(uuid())
-  title       String
-  description String
-  date        DateTime
-  time        String // stored as string (e.g., "10:30 AM")
-  duration    Int // in minutes
-  location    String
-  price       Decimal
-  capacity    Int
-  status      SeminarStatus @default(UPCOMING)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  bookings Booking[]
-}
-
 enum SeminarStatus {
   ONGOING
   UPCOMING
   COMPLETED
-}
-
-model Booking {
-  id         String   @id @default(cuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int
-  seminar    Seminar  @relation(fields: [seminarId], references: [id])
-  seminarId  String
-  quantity   Int      @default(1)
-  totalPrice Decimal
-  status     BookingStatus @default(PENDING)
-  createdAt  DateTime @default(now())
-  tickets    Ticket[]
-
-  razorpayPaymentId String?
-  razorpayOrderId   String?
-}
-
-model Ticket {
-  id        String   @id @default(cuid())
-  booking   Booking  @relation(fields: [bookingId], references: [id])
-  bookingId String
-  ticketCode String  @unique
-  createdAt DateTime @default(now())
 }
 
 enum BookingStatus {
@@ -143,21 +142,6 @@ enum BookingStatus {
   PAID
   FAILED
   CANCELLED
-}
-
-
-
-model Inquiry {
-  id             String   @id @default(cuid())
-  fullName       String
-  email          String
-  phoneNumber    String
-  inquiryType    String
-  subject        String
-  message        String
-  status         InquiryStatus @default(PENDING)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
 }
 
 enum InquiryStatus {

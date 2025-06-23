@@ -7,14 +7,9 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PUT(
-    request: NextRequest,
-    context: any
-) {
-    const { id } = context.params;
+export async function PUT(req : NextRequest , {params} : {params : {id : string}}){
 
-    const token = request.cookies.get("accessToken")?.value
+    const token = req.cookies.get("accessToken")?.value
 
     if(!token){
         return NextResponse.json({
@@ -34,11 +29,11 @@ export async function PUT(
     )
     }
 
-    const {status} = updateSchema.parse(await request.json())
+    const {status} = updateSchema.parse(await req.json())
 
-   
+     const id = params.id.replace(/[{}]/g, "")
 
-    const inquiry = await prisma.inquiry.update({
+     const inquiry = await prisma.inquiry.update({
         where : {id},
         data : {status}
     })
