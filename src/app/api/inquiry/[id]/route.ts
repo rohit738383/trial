@@ -1,7 +1,6 @@
 import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { toast } from "sonner";
 import { z } from "zod";    
 
 const updateSchema = z.object({
