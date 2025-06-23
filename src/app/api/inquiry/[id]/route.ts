@@ -3,13 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";    
 
+
 const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
 export async function PUT(
   req: NextRequest,
-  context: { params: Record<string, string> } 
+  context: any
 ) {
     const token = req.cookies.get("accessToken")?.value;
 
@@ -31,7 +32,7 @@ export async function PUT(
 
     const { status } = updateSchema.parse(await req.json());
 
-    const id = context.params.id;
+    const id = context.params?.id;
 
     const inquiry = await prisma.inquiry.update({
         where: { id },
