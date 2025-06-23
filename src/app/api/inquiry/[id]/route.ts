@@ -2,8 +2,6 @@ import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";    
-import type { RouteContextWithId } from "@/lib/types";
-
 
 const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
@@ -11,8 +9,8 @@ const updateSchema = z.object({
 
 export async function PUT(
     req: NextRequest,
-    context: RouteContextWithId
-  ) {
+    { params }: { params: Promise<{ id: string }> }
+  ): Promise<NextResponse> {
       const token = req.cookies.get("accessToken")?.value;
   
       if (!token) {
@@ -33,7 +31,7 @@ export async function PUT(
   
       const { status } = updateSchema.parse(await req.json());
   
-      const id = context.params.id; // Now accessing id directly from params
+      const {id} = await params; // Now accessing id directly from params
   
       const inquiry = await prisma.inquiry.update({
           where: { id },
