@@ -9,7 +9,7 @@ const updateSchema = z.object({
 
 export async function PUT(
     request: NextRequest,
-    context: { params: { id: string } }
+    context: any
 ) {
     const { id } = context.params;
 
