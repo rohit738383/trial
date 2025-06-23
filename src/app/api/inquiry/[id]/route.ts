@@ -2,7 +2,7 @@ import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";    
-import { Prisma } from "@prisma/client";
+
 
 const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
