@@ -7,11 +7,9 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
-export async function PUT(req : NextRequest , {params} : {params : Promise<{id : string}>}): Promise<NextResponse> {
-
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
    try {
-
-    const { id } = await params
+    const { id } = params;
 
      const token = req.cookies.get("accessToken")?.value
  
