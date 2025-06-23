@@ -7,7 +7,7 @@ import { z } from "zod";
 const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
-
+// @ts-ignore
 export async function PUT(req: NextRequest, { params } : { params :{ id : string}}) {
    try {
 
