@@ -9,7 +9,7 @@ const updateSchema = z.object({
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: { id: string }}
   ): Promise<NextResponse> {
       const token = req.cookies.get("accessToken")?.value;
   
@@ -31,7 +31,7 @@ export async function PUT(
   
       const { status } = updateSchema.parse(await req.json());
   
-      const {id} = await params; // Now accessing id directly from params
+      const {id} =  params; // Now accessing id directly from params
   
       const inquiry = await prisma.inquiry.update({
           where: { id },
