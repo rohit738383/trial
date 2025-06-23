@@ -8,7 +8,7 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
-// @ts-expect-error: explanation of why this is needed
+
 export async function PUT(req: NextRequest, { params } : { params :{ id : string}}) {
    try {
 
