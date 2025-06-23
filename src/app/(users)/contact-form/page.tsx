@@ -7,8 +7,8 @@ export default function ContactPage() {
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-900">Contact Us</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Have questions about our programs? Need help choosing the right course? We're here to help you on your
-          educational journey.
+          {"Have questions about our programs? Need help choosing the right course?"}
+           {" We're here to help you on your educational journey. "}
         </p>
       </div>
 

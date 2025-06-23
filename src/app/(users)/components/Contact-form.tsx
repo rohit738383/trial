@@ -76,7 +76,7 @@ export default function ContactForm() {
         <Card>
           <CardHeader>
             <CardTitle>Get in Touch</CardTitle>
-            <CardDescription>We're here to help you with any questions about our educational programs</CardDescription>
+            <CardDescription>{"We're here to help you with any questions about our educational programs"}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -142,7 +142,7 @@ export default function ContactForm() {
               <Send className="h-5 w-5 text-blue-600" />
               <span>Send us a Message</span>
             </CardTitle>
-            <CardDescription>Fill out the form below and we'll get back to you as soon as possible</CardDescription>
+            <CardDescription>{"Fill out the form below and we'll get back to you as soon as possible"}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">

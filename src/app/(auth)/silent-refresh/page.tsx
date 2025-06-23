@@ -37,8 +37,14 @@ export default function SilentRefreshPage() {
           console.warn('[RefreshToken] Token refresh returned unexpected status:', res.status);
           router.replace('/sign-in');
         }
-      } catch (error: any) {
-        console.error('[RefreshToken] Refresh token request failed:', error.response?.status || error.message);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          console.error('[RefreshToken] Refresh token request failed:', error.response?.status || error.message);
+        } else if (error instanceof Error) {
+          console.error('[RefreshToken] Refresh token request failed:', error.message);
+        } else {
+          console.error('[RefreshToken] Refresh token request failed:', error);
+        }
         router.replace('/sign-in');
       } finally {
         refreshLock.current = false;

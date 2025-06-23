@@ -91,7 +91,7 @@ export default function CareersPage() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Current Openings</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                We're not hiring right now, but we're always interested in talented people. Feel free to reach out!
+                {"We're not hiring right now, but we're always interested in talented people. Feel free to reach out!"}
               </p>
             </div>
           </div>

@@ -54,6 +54,7 @@ import { toast } from "sonner";
 import { openRazorpayCheckout } from "@/lib/razorpay_modal";
 import { useAuthStore } from "@/stores/useAuthStore";
 
+
 type Seminar = z.infer<typeof seminarSchema>;
 
 const containerVariants = {
@@ -66,32 +67,6 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
-  hidden: {
-    opacity: 0,
-    y: 50,
-    scale: 0.9,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
-    },
-  },
-  hover: {
-    y: -8,
-    scale: 1.02,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 20,
-    },
-  },
-};
 
 function SeminarCard({
   seminar,
@@ -192,7 +167,6 @@ function SeminarCard({
           </div>
         )}
 
-        {/* Status badge */}
         <div
           className={`absolute top-4 right-4 z-10 ${
             isCompleted ? "top-16" : ""
@@ -375,7 +349,6 @@ export default function SeminarPage() {
   const [activeTab, setActiveTab] = useState("ongoing");
   const [seminars, setSeminars] = useState<Seminar[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [bookingModal, setBookingModal] = useState(false);
   const [selectedSeminar, setSelectedSeminar] = useState<Seminar | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -386,7 +359,6 @@ export default function SeminarPage() {
     const fetchSeminars = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const res = await axios.get("/api/seminars");
 
@@ -399,13 +371,9 @@ export default function SeminarPage() {
         const parsedSeminars = seminarSchema.array().parse(rawSeminars);
 
         setSeminars(parsedSeminars);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching seminars:", err);
-        setError(
-          err.response?.data?.message ||
-            err.message ||
-            "Failed to load seminars"
-        );
+      
         toast.error("Failed to load seminars");
       } finally {
         setLoading(false);
@@ -468,9 +436,17 @@ export default function SeminarPage() {
       } else {
         alert(data.error);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Booking error:", error);
-      toast.error(error.response?.data?.message || "Failed to book seminar");
+      let errorMsg = "Failed to book seminar";
+      if (axios.isAxiosError && axios.isAxiosError(error)) {
+        errorMsg = error.response?.data?.message || error.message || errorMsg;
+      } else if (typeof error === "string") {
+        errorMsg = error;
+      } else if (error && typeof error === "object" && "message" in error && typeof (error as any).message === "string") {
+        errorMsg = (error as any).message;
+      }
+      toast.error(errorMsg);
     }
   };
 
@@ -479,7 +455,6 @@ export default function SeminarPage() {
   // Debug logging
   console.log("Current state:", {
     loading,
-    error,
     totalSeminars: seminars.length,
     ongoing: ongoingSeminars.length,
     upcoming: upcomingSeminars.length,
@@ -665,29 +640,8 @@ export default function SeminarPage() {
             </TabsList>
           </motion.div>
 
-          {/* Error State */}
-          {error && (
-            <div className="text-center py-12">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-                <div className="text-red-600 mb-2">
-                  <Trophy className="w-8 h-8 mx-auto mb-2" />
-                </div>
-                <h3 className="text-lg font-semibold text-red-800 mb-2">
-                  Error Loading Seminars
-                </h3>
-                <p className="text-red-600 text-sm">{error}</p>
-                <Button
-                  onClick={() => window.location.reload()}
-                  className="mt-4 bg-red-600 hover:bg-red-700"
-                >
-                  Try Again
-                </Button>
-              </div>
-            </div>
-          )}
-
           {/* Loading State */}
-          {loading && !error && (
+          {loading && (
             <div className="space-y-8">
               <div className="text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-600 mb-4" />
@@ -702,7 +656,7 @@ export default function SeminarPage() {
           )}
 
           {/* Content Tabs */}
-          {!loading && !error && (
+          {!loading && (
             <>
               <TabsContent value="ongoing" className="mt-0">
                 <motion.div

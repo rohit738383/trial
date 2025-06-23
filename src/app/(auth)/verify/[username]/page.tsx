@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/input-otp"
 
 
-const verifyOtp = () =>{
+const VerifyOtp = () =>{
 
     const router = useRouter();
     const params = useParams<{username: string}>()
@@ -74,7 +74,7 @@ const verifyOtp = () =>{
         toast.success("OTP Resent", {
           description: response.data.message,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         const errorMessage = axios.isAxiosError(error) ? error.response?.data?.message || "Something went wrong" : "Resend code error";
         toast.error("Failed to resend OTP", {
           description: errorMessage,
@@ -141,4 +141,4 @@ const verifyOtp = () =>{
   )
 }
 
-export default verifyOtp
+export default VerifyOtp

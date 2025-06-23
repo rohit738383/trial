@@ -168,8 +168,8 @@ export default function StudytainmentHomepage() {
                   </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Revolutionary learning experiences that engage, inspire, and empower students from age 3 to 30. Join
-                  thousands who've transformed their educational journey with us.
+                  {"Revolutionary learning experiences that engage, inspire, and empower students from age 3 to 30."}
+                   {"Join thousands who've transformed their educational journey with us."}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
@@ -408,7 +408,7 @@ export default function StudytainmentHomepage() {
               Why Students Love Us
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              We've revolutionized education by solving the biggest problems students face
+              {"We've revolutionized education by solving the biggest problems students face"}
             </p>
           </div>
 

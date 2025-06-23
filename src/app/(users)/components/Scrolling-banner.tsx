@@ -28,23 +28,23 @@ export default function ScrollingBanner() {
             <span className="text-sm md:text-base font-semibold mx-8">
               📚 Learn from Industry Experts - Register Now!
             </span>
-            <span className="text-sm md:text-base font-semibold mx-8">⚡ Don't Miss Out - Only Few Seats Left!</span>
+            <span className="text-sm md:text-base font-semibold mx-8">{"⚡ Don't Miss Out - Only Few Seats Left!"}</span>
             <span className="text-sm md:text-base font-semibold mx-8">
               🎉 Join Our Exclusive Seminar - Get 10% OFF Limited Time Offer!
             </span>
             <span className="text-sm md:text-base font-semibold mx-8">
               📚 Learn from Industry Experts - Register Now!
             </span>
-            <span className="text-sm md:text-base font-semibold mx-8">⚡ Don't Miss Out - Only Few Seats Left!</span>
+            <span className="text-sm md:text-base font-semibold mx-8">{"⚡ Don't Miss Out - Only Few Seats Left!"}</span>
           </div>
         </div>
-        {/* <button
+        <button
           onClick={() => setIsVisible(false)}
           className="ml-4 p-1 hover:bg-white/20 rounded-full transition-colors"
           aria-label="Close banner"
         >
           <X className="h-4 w-4" />
-        </button> */}
+        </button>
       </div>
     </div>
   )
