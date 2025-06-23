@@ -84,7 +84,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 text-sm">
               <div className="h-2 w-2 rounded-full bg-purple-600"></div>
               <span className="text-muted-foreground">1 day ago</span>
-              <span>Seminar "Database Design" updated</span>
+              <span>Seminar Database Design updated</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <div className="h-2 w-2 rounded-full bg-red-600"></div>
