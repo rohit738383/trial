@@ -7,16 +7,13 @@ const updateSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
   });
 
-type Context = {
-    params: {
-        id: string;
-    };
-};
-
 export async function PUT(
     request: NextRequest,
-    context: Context
+    { params }: { params: Promise<{ id: string }> }
 ) {
+
+    const {id} = await params
+
     const token = request.cookies.get("accessToken")?.value
 
     if(!token){
@@ -39,7 +36,7 @@ export async function PUT(
 
     const {status} = updateSchema.parse(await request.json())
 
-    const id = context.params.id.replace(/[{}]/g, "")
+   
 
     const inquiry = await prisma.inquiry.update({
         where : {id},
