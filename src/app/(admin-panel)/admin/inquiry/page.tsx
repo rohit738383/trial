@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Filter, MessageSquare, Phone, Mail, Clock, CheckCircle, AlertCircle, Edit } from "lucide-react"
 import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
-import { ExportService } from "@/lib/export-inquiry"
+// import { ExportService } from "@/lib/export-inquiry"
 import {
   Dialog,
   DialogContent,
@@ -41,124 +41,7 @@ type Inquiry = z.infer<typeof inquirySchema> & {
   status: InquiryStatus;
 };
 
-// Mock data
-// const inquiries = [
-//   {
-//     id: 1,
-//     fullName: "John Doe",
-//     email: "john@example.com",
-//     phoneNumber: "+1-555-0123",
-//     inquiryType: "Seminar Booking",
-//     subject: "Booking for React Seminar",
-//     message:
-//       "I would like to book a seat for the Advanced React Patterns seminar scheduled for February 15th. Please confirm availability.",
-//     status: "pending",
-//     createdAt: "2024-01-20",
-//   },
-//   {
-//     id: 2,
-//     fullName: "Jane Smith",
-//     email: "jane@example.com",
-//     phoneNumber: "+1-555-0456",
-//     inquiryType: "Technical Support",
-//     subject: "Login Issues",
-//     message: "I'm having trouble logging into my account. The password reset email is not arriving in my inbox.",
-//     status: "resolved",
-//     createdAt: "2024-01-22",
-//   },
-//   {
-//     id: 3,
-//     fullName: "Mike Johnson",
-//     email: "mike@example.com",
-//     phoneNumber: "+1-555-0789",
-//     inquiryType: "Payment Issues",
-//     subject: "Payment Failed",
-//     message:
-//       "My payment for the Database Design seminar failed but the amount was deducted from my account. Please help resolve this issue.",
-//     status: "in-progress",
-//     createdAt: "2024-01-25",
-//   },
-//   {
-//     id: 4,
-//     fullName: "Sarah Wilson",
-//     email: "sarah@example.com",
-//     phoneNumber: "+1-555-0321",
-//     inquiryType: "General Information",
-//     subject: "Seminar Schedule",
-//     message: "Could you please provide me with the complete schedule of upcoming seminars for March 2024?",
-//     status: "pending",
-//     createdAt: "2024-01-28",
-//   },
-//   {
-//     id: 5,
-//     fullName: "David Brown",
-//     email: "david@example.com",
-//     phoneNumber: "+1-555-0654",
-//     inquiryType: "Partnership Opportunities",
-//     subject: "Corporate Training Partnership",
-//     message:
-//       "We are interested in partnering with you for corporate training programs. Please share more details about your enterprise offerings.",
-//     status: "resolved",
-//     createdAt: "2024-01-30",
-//   },
-//   {
-//     id: 6,
-//     fullName: "Lisa Garcia",
-//     email: "lisa@example.com",
-//     phoneNumber: "+1-555-0987",
-//     inquiryType: "Career Opportunities",
-//     subject: "Instructor Position",
-//     message:
-//       "I have 5 years of experience in web development and would like to apply for an instructor position. Please let me know about current openings.",
-//     status: "in-progress",
-//     createdAt: "2024-02-01",
-//   },
-//   {
-//     id: 7,
-//     fullName: "Alex Johnson",
-//     email: "alex@example.com",
-//     phoneNumber: "+1-555-0147",
-//     inquiryType: "Feedback & Suggestions",
-//     subject: "Platform Improvement",
-//     message:
-//       "The booking process could be simplified. I suggest adding a one-click booking option for returning customers.",
-//     status: "pending",
-//     createdAt: "2024-02-05",
-//   },
-//   {
-//     id: 8,
-//     fullName: "Emma Davis",
-//     email: "emma@example.com",
-//     phoneNumber: "+1-555-0258",
-//     inquiryType: "Seminar Booking",
-//     subject: "Group Booking Discount",
-//     message: "We are a team of 10 developers interested in the Node.js Masterclass. Do you offer group discounts?",
-//     status: "resolved",
-//     createdAt: "2024-02-08",
-//   },
-//   {
-//     id: 9,
-//     fullName: "Robert Wilson",
-//     email: "robert@example.com",
-//     phoneNumber: "+1-555-0369",
-//     inquiryType: "Technical Support",
-//     subject: "Certificate Download Issue",
-//     message: "I completed the seminar but unable to download my certificate. The download link seems to be broken.",
-//     status: "in-progress",
-//     createdAt: "2024-02-10",
-//   },
-//   {
-//     id: 10,
-//     fullName: "Sophie Brown",
-//     email: "sophie@example.com",
-//     phoneNumber: "+1-555-0741",
-//     inquiryType: "General Information",
-//     subject: "Refund Policy",
-//     message: "What is your refund policy if I need to cancel my seminar booking due to an emergency?",
-//     status: "pending",
-//     createdAt: "2024-02-12",
-//   },
-// ]
+
 
 
 export default function InquiriesPage() {
@@ -365,10 +248,10 @@ export default function InquiriesPage() {
             </Select>
           </div>
         </div>
-        <ExportDropdown
+        {/* <ExportDropdown
           onExport={(format) => ExportService.exportInquiriesData(filteredInquiries, format)}
           label="Export Inquiries"
-        />
+        /> */}
       </div>
 
       {/* Inquiries Table */}

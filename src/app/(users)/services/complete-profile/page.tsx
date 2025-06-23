@@ -141,7 +141,11 @@ export default function CompleteProfile() {
     if (name.startsWith("child.") && index !== undefined) {
       const key = name.replace("child.", "") as keyof Child
       const updatedChildren = [...form.children]
-      updatedChildren[index][key] = value as any
+      if (key === "gender") {
+        updatedChildren[index][key] = value as "MALE" | "FEMALE"
+      } else {
+        updatedChildren[index][key] = value as string
+      }
       setForm({ ...form, children: updatedChildren })
     } else {
       setForm({ ...form, [name]: value })
@@ -323,8 +327,8 @@ export default function CompleteProfile() {
                     <SelectItem value="high-school">High School</SelectItem>
                     <SelectItem value="diploma">Diploma</SelectItem>
                     <SelectItem value="associate">Associate Degree</SelectItem>
-                    <SelectItem value="bachelor">Bachelor's Degree</SelectItem>
-                    <SelectItem value="master">Master's Degree</SelectItem>
+                    <SelectItem value="bachelor">{"Bachelor's Degree"}</SelectItem>
+                    <SelectItem value="master">{"Master's Degree"}</SelectItem>
                     <SelectItem value="phd">PhD</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>

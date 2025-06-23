@@ -4,8 +4,14 @@ import { verifyRefreshToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { calculateProfileCompletion } from "@/lib/profile";
 import { generateRandomAvatar } from "@/lib/avatar";
+import { User, UserProfile, Child } from "@prisma/client";
 
-function getProfileData(user: any) {
+type UserWithProfileAndChildren = User & {
+  profile: UserProfile | null;
+  children: Child[];
+};
+
+function getProfileData(user: UserWithProfileAndChildren) {
   return {
     avatar: generateRandomAvatar(user.username),
     profileCompletion: calculateProfileCompletion(user.profile, user.children || []),

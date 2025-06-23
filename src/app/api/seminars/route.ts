@@ -56,7 +56,7 @@ export async function POST(req : NextRequest) {
          return NextResponse.json(seminar);
 }
 
-export async function GET(_ : NextRequest){
+export async function GET(){
     const seminars = await prisma.seminar.findMany({
         orderBy : {
             date : "asc"

@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Users, UserCheck, UserX, Mail, Filter } from "lucide-react"
 import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
-import { ExportService } from "@/lib/export-utils"
+// import { ExportService } from "@/lib/export-utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Mock data
@@ -256,10 +256,10 @@ export default function UsersPage() {
             </Select>
           </div>
         </div>
-        <ExportDropdown
+        {/* <ExportDropdown
           onExport={(format) => ExportService.exportUsersData(filteredUsers, format)}
           label="Export Users"
-        />
+        /> */}
       </div>
 
       {/* Users Table */}

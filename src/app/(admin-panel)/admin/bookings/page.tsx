@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, CreditCard, Clock, CheckCircle } from "lucide-react"
 import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
-import { ExportService } from "@/lib/export-utils"
+// import { ExportService } from "@/lib/export-utils"
 import { Button } from "@/components/ui/button"
 
 // Mock data
@@ -295,10 +295,10 @@ export default function BookingsPage() {
             </Select>
           </div>
         </div>
-        <ExportDropdown
+        {/* <ExportDropdown
           onExport={(format) => ExportService.exportBookingsData(filteredBookings, format)}
           label="Export Bookings"
-        />
+        /> */}
       </div>
 
       {/* Bookings Table */}

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 }
 
 
-export async function GET(_ : NextRequest){
+export async function GET(){
     try {
         const inquiries = await prisma.inquiry.findMany({
             orderBy : {

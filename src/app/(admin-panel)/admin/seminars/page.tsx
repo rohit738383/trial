@@ -41,7 +41,7 @@ import {
 import { Plus, Search, Edit, Trash2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown";
-import { ExportService } from "@/lib/export-utils";
+// import { ExportService } from "@/lib/export-utils";
 import axiosInstance from "@/lib/axiosInstance";
 import { seminarSchema } from "@/schemas/seminarSchema";
 import * as z from "zod";
@@ -196,12 +196,12 @@ export default function SeminarsPage() {
             className="w-[300px]"
           />
         </div>
-        <ExportDropdown
+        {/* <ExportDropdown
           onExport={(format) =>
             ExportService.exportSeminarsData(filteredSeminars, format)
           }
           label="Export Seminars"
-        />
+        /> */}
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
