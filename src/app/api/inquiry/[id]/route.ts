@@ -9,40 +9,40 @@ const updateSchema = z.object({
 });
 
 export async function PUT(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
-    const token = req.cookies.get("accessToken")?.value;
-
-    if (!token) {
-        return NextResponse.json({
-            success: false,
-            message: "Unauthorized"
-        }, { status: 401 });
-    }
-
-    const user = await verifyJWT(token);
-
-    if (!user || user.role !== "ADMIN") {
-        return NextResponse.json({
-            success: false,
-            message: "Forbidden"
-        }, { status: 403 });
-    }
-
-    const { status } = updateSchema.parse(await req.json());
-
-    const id = context.params?.id;
-
-    const inquiry = await prisma.inquiry.update({
-        where: { id },
-        data: { status }
-    });
-
-    return NextResponse.json({
-        success: true,
-        message: "Inquiry updated successfully",
-        data: inquiry
-    }, { status: 200 });
-}
+    req: NextRequest,
+    { params }: { params: { id: string } }
+  ) {
+      const token = req.cookies.get("accessToken")?.value;
+  
+      if (!token) {
+          return NextResponse.json({
+              success: false,
+              message: "Unauthorized"
+          }, { status: 401 });
+      }
+  
+      const user = await verifyJWT(token);
+  
+      if (!user || user.role !== "ADMIN") {
+          return NextResponse.json({
+              success: false,
+              message: "Forbidden"
+          }, { status: 403 });
+      }
+  
+      const { status } = updateSchema.parse(await req.json());
+  
+      const id = params.id;  // Now accessing id directly from params
+  
+      const inquiry = await prisma.inquiry.update({
+          where: { id },
+          data: { status }
+      });
+  
+      return NextResponse.json({
+          success: true,
+          message: "Inquiry updated successfully",
+          data: inquiry
+      }, { status: 200 });
+  }
 
