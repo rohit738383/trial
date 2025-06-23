@@ -2,6 +2,20 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 
+enum Gender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  OTHER = "OTHER",
+}
+
+type Child = {
+  id: number;
+  name: string;
+  age: number;
+  gender: Gender;
+  className: string;
+};
+
 type ProfileCompletion = {
   percentage: number;
   missingFields: string[];
@@ -17,8 +31,7 @@ type User = {
   isVerified: boolean;
   avatar: string;
   profileCompletion: ProfileCompletion;
-  children: any[];
-
+  children: Child[];
 };
 
 type AuthStore = {

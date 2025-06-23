@@ -15,6 +15,40 @@ export const loadRazorpayScript = () => {
     user: { name: string; email: string; phone: string };
   };
   
+  interface RazorpayPaymentResponse {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }
+  
+  interface RazorpayOptions {
+    key: string | undefined;
+    amount: number;
+    currency: string;
+    name: string;
+    description: string;
+    order_id: string;
+    handler: (response: RazorpayPaymentResponse) => void;
+    prefill: {
+      name: string;
+      email: string;
+      contact: string;
+    };
+    theme: {
+      color: string;
+    };
+  }
+  
+  declare global {
+    interface Window {
+      Razorpay: {
+        new (options: RazorpayOptions): {
+          open(): void;
+        };
+      };
+    }
+  }
+  
   export const openRazorpayCheckout = async ({
     bookingId,
     orderId,
@@ -27,14 +61,14 @@ export const loadRazorpayScript = () => {
       return;
     }
   
-    const options: any = {
+    const options: RazorpayOptions = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: amount * 100, // paise
       currency: "INR",
       name: "Your App Name",
       description: "Seminar Booking",
       order_id: orderId,
-      handler: async function (response: any) {
+      handler: async function (response: RazorpayPaymentResponse) {
         const res = await fetch("/api/verify-payment", {
           method: "POST",
           body: JSON.stringify({
@@ -61,7 +95,7 @@ export const loadRazorpayScript = () => {
       },
     };
   
-    const razorpay = new (window as any).Razorpay(options);
+    const razorpay = new window.Razorpay(options);
     razorpay.open();
   };
   
