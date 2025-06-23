@@ -59,7 +59,7 @@ export function AppSidebar() {
   const handleLogout = async () => {
 
   try {
-    const response = await axios.post("/api/sign-out")
+        await axios.post("/api/sign-out")
 
       toast.success("Logged out successfully",{
         description: "You have been logged out of your account",
@@ -67,6 +67,7 @@ export function AppSidebar() {
     
     router.replace("/admin-sign-in")
   } catch (error) {
+    console.error(error);
     toast.error("Error in Logout",{
       description: "Please try again",
     })

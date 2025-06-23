@@ -31,6 +31,7 @@ export function ExportDropdown({ onExport, disabled = false, label = "Export" }:
         description: `Data exported as ${format.toUpperCase()} file`,
       })
     } catch (error) {
+      console.error(error);
         toast.error("Export failed",{
             description: `Data exported as ${format.toUpperCase()} file`,
           })

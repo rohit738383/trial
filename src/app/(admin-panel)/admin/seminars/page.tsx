@@ -46,6 +46,7 @@ import axiosInstance from "@/lib/axiosInstance";
 import { seminarSchema } from "@/schemas/seminarSchema";
 import * as z from "zod";
 import { Seminar } from "@prisma/client";
+import type { AxiosError } from "axios";
 
 type SeminarFormData = z.infer<typeof seminarSchema> ;
 
@@ -123,10 +124,10 @@ export default function SeminarsPage() {
       }
       setFormData(defaultFormData);
       setIsAddDialogOpen(false);
-    } catch (errors: unknown) {
-      console.log("errors", errors);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<{ errors?: string }>;
       toast.error("Request failed", {
-        description: (errors as any)?.response?.data?.errors || "Unknown error",
+        description: axiosError.response?.data?.errors || "Unknown error",
       });
     }
   };
