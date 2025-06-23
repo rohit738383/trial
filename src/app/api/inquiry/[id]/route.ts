@@ -10,7 +10,7 @@ const updateSchema = z.object({
 
 export async function PUT(
   req: NextRequest,
-  context: any
+  context: { params: { id: string } }
 ) {
     const token = req.cookies.get("accessToken")?.value;
 
