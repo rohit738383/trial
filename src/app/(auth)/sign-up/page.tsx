@@ -30,7 +30,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 
-const page = () => {
+const Page = () => {
   const [username, setUsername] = useState("")
   const [usernameMessage, setUsernameMessage] = useState("")
   const [isCheckUsername, setIsCheckUsername] = useState(false)
@@ -384,4 +384,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
