@@ -77,7 +77,7 @@ export default function SeminarsPage() {
 
         console.log("Fetched seminars:", seminarList);
         setSeminars(seminarList);
-      } catch (err) {
+      } catch {
         toast.error("Failed to load seminars");
       }
     };
@@ -123,15 +123,15 @@ export default function SeminarsPage() {
       }
       setFormData(defaultFormData);
       setIsAddDialogOpen(false);
-    } catch (errors: any) {
+    } catch (errors: unknown) {
       console.log("errors", errors);
       toast.error("Request failed", {
-        description: errors?.response?.data?.errors || "Unknown error",
+        description: (errors as any)?.response?.data?.errors || "Unknown error",
       });
     }
   };
 
-  const handleEdit = (seminar: any) => {
+  const handleEdit = (seminar: { id: string } & SeminarFormData) => {
     setEditingSeminar(seminar);
     setFormData({
       title: seminar.title,
@@ -140,7 +140,7 @@ export default function SeminarsPage() {
       time: seminar.time,
       duration: seminar.duration,
       location: seminar.location,
-      price: seminar.price.toString(),
+      price: seminar.price,
       capacity: seminar.capacity,
       status: seminar.status,
     });
@@ -152,7 +152,7 @@ export default function SeminarsPage() {
       await axiosInstance.delete(`/api/seminars/${id}`);
       setSeminars(seminars.filter((s) => s.id !== id));
       toast.success("Seminar deleted");
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete seminar");
     }
   };
@@ -419,7 +419,18 @@ export default function SeminarsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleEdit(seminar)}
+                            onClick={() => handleEdit({
+                              id: seminar.id,
+                              title: seminar.title,
+                              description: seminar.description,
+                              date: typeof seminar.date === 'string' ? seminar.date : new Date(seminar.date).toISOString().split('T')[0],
+                              time: seminar.time,
+                              duration: seminar.duration,
+                              location: seminar.location,
+                              price: typeof seminar.price === 'number' ? seminar.price : Number(seminar.price),
+                              capacity: seminar.capacity,
+                              status: seminar.status as "UPCOMING" | "COMPLETED" | "ONGOING",
+                            })}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
