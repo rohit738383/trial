@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, Plus, Trash2, Upload } from "lucide-react"
+import { ArrowLeft, Plus, Trash2 } from "lucide-react"
 import  Link from "next/link"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -62,7 +62,7 @@ export default function CompleteProfile() {
           setForm({
             ...rest,
             children: children.length > 0
-              ? children.map((child: any) => ({
+              ? children.map((child: Child) => ({
                   ...child,
                   age: child.age.toString(),
                 }))
@@ -76,8 +76,12 @@ export default function CompleteProfile() {
                 ],
           })
         }
-      } catch (error) {
-        console.error("Error loading profile", error)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error("Error loading profile", error.message)
+        } else {
+          console.error("Error loading profile", error)
+        }
       }
     }
 
@@ -197,9 +201,17 @@ export default function CompleteProfile() {
       console.log(" User updated after submit:", useAuthStore.getState().user);
   
       router.replace("/");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      let errorMessage = "";
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === "string") {
+        errorMessage = err;
+      } else {
+        errorMessage = "Unknown error";
+      }
       toast.error("Profile update failed",{
-        description: err.message,
+        description: errorMessage,
       })
     } finally {
       setLoading(false);
@@ -387,13 +399,13 @@ export default function CompleteProfile() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor={`child-name-${index}`}>Child's Name</Label>
+                      <Label htmlFor={`child-name-${index}`}>{"Child's Name"}</Label>
                       <Input
                         id={`child-name-${index}`}
                         name="child.name"
                         value={child.name}
                         onChange={(e) => handleChange(e, index)}
-                        placeholder="Enter child's name"
+                        placeholder={"Enter child's name"}
                       />
                     </div>
                     <div>

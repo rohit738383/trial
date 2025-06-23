@@ -1,14 +1,20 @@
 import axios from 'axios';
 
+// Add type for failed queue items
+type FailedQueueItem = {
+  resolve: (token?: string) => void;
+  reject: (error: unknown) => void;
+};
+
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || '',
   withCredentials: true,
 });
 
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: FailedQueueItem[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(prom => {
     if (token) prom.resolve(token);
     else prom.reject(error);

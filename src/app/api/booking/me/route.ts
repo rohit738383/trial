@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyRefreshToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Description } from "@radix-ui/react-dialog";
 
 
 export async function GET(req : NextRequest) {
@@ -55,9 +56,11 @@ export async function GET(req : NextRequest) {
           },{status: 200})
 
     } catch (error) {
+      console.error(error);
         return NextResponse.json({
             success: false,
             message: "Internal server error",
+       
         },{status: 500})
     }
 }

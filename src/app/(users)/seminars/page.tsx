@@ -141,7 +141,7 @@ function SeminarCard({
         day: "numeric",
         year: "numeric",
       });
-    } catch (error) {
+    } catch {
       return "Invalid Date";
     }
   };
@@ -443,8 +443,13 @@ export default function SeminarPage() {
         errorMsg = error.response?.data?.message || error.message || errorMsg;
       } else if (typeof error === "string") {
         errorMsg = error;
-      } else if (error && typeof error === "object" && "message" in error && typeof (error as any).message === "string") {
-        errorMsg = (error as any).message;
+      } else if (
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof (error as { message?: unknown }).message === "string"
+      ) {
+        errorMsg = (error as { message: string }).message;
       }
       toast.error(errorMsg);
     }

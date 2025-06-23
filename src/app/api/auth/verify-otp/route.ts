@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createAccessToken, createRefreshToken } from '@/lib/auth';
 import { serialize } from 'cookie';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+
 
 export async function POST(request: Request) {
 

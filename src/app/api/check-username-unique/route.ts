@@ -60,7 +60,7 @@ export async function GET(request : Request){
 
 
     } catch (error) {
-       
+       console.error(error);
         return  NextResponse.json({
             success : false,
             message : "Error checking username",
