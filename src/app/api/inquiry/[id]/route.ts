@@ -7,15 +7,12 @@ const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
-// ✅ NO `any`, NO ESLINT ERROR
-type Context = {
-  params: {
-    id: string;
-  };
-};
-
-// ✅ Arrow function (required for Next.js 15)
-export const PUT = async (req: NextRequest, context: Context) => {
+// ✅ DON'T declare your own type — use inline destructuring
+// ✅ DON'T use `any` — ESLint will complain
+export const PUT = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   try {
     const token = req.cookies.get("accessToken")?.value;
 
@@ -31,10 +28,8 @@ export const PUT = async (req: NextRequest, context: Context) => {
 
     const { status } = updateSchema.parse(await req.json());
 
-    const id = context.params.id;
-
     const inquiry = await prisma.inquiry.update({
-      where: { id },
+      where: { id: params.id },
       data: { status },
     });
 
