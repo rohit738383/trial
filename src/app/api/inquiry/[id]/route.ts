@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
 import { z } from "zod";
-import { InquiryStatus } from "@prisma/client"; // 👈 Correct enum for Inquiry
+import { InquiryStatus } from "@prisma/client"; // ✅ Yeh tera original enum
 
 const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
@@ -28,8 +28,7 @@ export const PUT = async (req: NextRequest, { params }: any) => {
     const inquiry = await prisma.inquiry.update({
       where: { id: params.id },
       data: {
-        // ✅ Enum mapping for Prisma
-        status: InquiryStatus[status as keyof typeof InquiryStatus],
+        status: InquiryStatus[status as keyof typeof InquiryStatus], // ✅ Enum mapping
       },
     });
 
