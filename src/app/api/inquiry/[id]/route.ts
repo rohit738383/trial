@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyJWT } from "@/lib/auth";
 import { z } from "zod";
+import { InquiryStatus } from "@prisma/client"; // ✅ Import Prisma enum
 
 const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const PUT = async (req: NextRequest, context: any) => {
@@ -25,9 +25,14 @@ export const PUT = async (req: NextRequest, context: any) => {
 
     const { status } = updateSchema.parse(await req.json());
 
+    const id = context.params.id;
+
+    // ✅ Convert string to Prisma enum
     const inquiry = await prisma.inquiry.update({
-      where: { id: context.params.id },
-      data: { status },
+      where: { id },
+      data: {
+        status: InquiryStatus[status as keyof typeof InquiryStatus],
+      },
     });
 
     return NextResponse.json({
