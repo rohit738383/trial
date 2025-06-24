@@ -1,18 +1,18 @@
 import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";    
+import { z } from "zod";
 
 const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
 export const PUT = async (
-  req: NextRequest,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
 ) => {
   try {
-    const token = req.cookies.get("accessToken")?.value;
+    const token = request.cookies.get("accessToken")?.value;
 
     if (!token) {
       return NextResponse.json(
@@ -30,9 +30,9 @@ export const PUT = async (
       );
     }
 
-    const { status } = updateSchema.parse(await req.json());
+    const { status } = updateSchema.parse(await request.json());
 
-    const id = context.params.id.replace(/[{}]/g, "");
+    const id = params.id.replace(/[{}]/g, "");
 
     const inquiry = await prisma.inquiry.update({
       where: { id },
