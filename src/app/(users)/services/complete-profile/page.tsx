@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState , useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,11 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import  Link from "next/link"
+import Link from "next/link"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/stores/useAuthStore"
-
 
 type Child = {
   name: string
@@ -23,7 +22,6 @@ type Child = {
 }
 
 export default function CompleteProfile() {
-
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -34,8 +32,10 @@ export default function CompleteProfile() {
     state: "",
     zipCode: "",
     highestEducation: "",
-    areaOfInterest: "",
     relationToChild: "",
+    counterpartnerName: "",       
+    counterpartnerPhoneNumber: "", 
+    counterpartnerEducation: "",   
     children: [
       {
         name: "",
@@ -44,6 +44,11 @@ export default function CompleteProfile() {
         className: "",
       },
     ] as Child[],
+    complementaryRelation: {
+      name: "",
+      education: "",
+      phoneNumber: "",
+    },
   })
 
   useEffect(() => {
@@ -60,7 +65,15 @@ export default function CompleteProfile() {
         if (data.profile) {
           const { children = [], ...rest } = data.profile
           setForm({
-            ...rest,
+            address: rest.address ?? "",
+            city: rest.city ?? "",
+            state: rest.state ?? "",
+            zipCode: rest.zipCode ?? "",
+            highestEducation: rest.highestEducation ?? "",
+            relationToChild: rest.relationToChild ?? "",
+            counterpartnerName: rest.counterpartnerName ?? "",
+            counterpartnerPhoneNumber: rest.counterpartnerPhoneNumber ?? "",
+            counterpartnerEducation: rest.counterpartnerEducation ?? "",
             children: children.length > 0
               ? children.map((child: Child) => ({
                   ...child,
@@ -74,6 +87,11 @@ export default function CompleteProfile() {
                     className: "",
                   },
                 ],
+            complementaryRelation: {
+              name: "",
+              education: "",
+              phoneNumber: "",
+            },
           })
         }
       } catch (error: unknown) {
@@ -88,8 +106,6 @@ export default function CompleteProfile() {
     fetchProfile()
   }, [])
 
-
-
   const calculateProgress = (): { completion: number; missingFields: string[] } => {
     const basicFields = [
       { name: "address", value: form.address },
@@ -97,29 +113,66 @@ export default function CompleteProfile() {
       { name: "state", value: form.state },
       { name: "zipCode", value: form.zipCode },
       { name: "highestEducation", value: form.highestEducation },
-      { name: "areaOfInterest", value: form.areaOfInterest },
       { name: "relationToChild", value: form.relationToChild },
+      { name: "counterpartnerName", value: form.counterpartnerName },
+      { name: "counterpartnerPhoneNumber", value: form.counterpartnerPhoneNumber },
+      { name: "counterpartnerEducation", value: form.counterpartnerEducation },
+    ]
+
+    // For each child, check all 4 fields
+    let childFields: { name: string; value: string; childIndex: number }[] = [];
+    form.children.forEach((child, idx) => {
+      childFields.push({ name: `child_${idx}_name`, value: child.name, childIndex: idx });
+      childFields.push({ name: `child_${idx}_age`, value: child.age, childIndex: idx });
+      childFields.push({ name: `child_${idx}_gender`, value: child.gender, childIndex: idx });
+      childFields.push({ name: `child_${idx}_className`, value: child.className, childIndex: idx });
+    });
+
+    const missingFields = [
+      ...basicFields.filter((field) => !String(field.value ?? "").trim()).map((field) => field.name),
+      ...childFields.filter((field) => !String(field.value ?? "").trim()).map((field) => field.name),
     ];
 
-    const childrenComplete = form.children.every((child) => 
-      child.name && child.age && child.className
-    );
+    const completed = [
+      ...basicFields.filter((field) => String(field.value ?? "").trim()),
+      ...childFields.filter((field) => String(field.value ?? "").trim()),
+    ].length;
+    const totalFields = basicFields.length + childFields.length;
 
-    const missingFields = basicFields
-      .filter((field) => !field.value.trim())
-      .map((field) => field.name);
-
-    const completed = basicFields.filter((field) => field.value.trim()).length;
-    const totalFields = basicFields.length + (childrenComplete ? 1 : 0);
-    
     return {
       completion: totalFields > 0 ? Math.round((completed / totalFields) * 100) : 0,
-      missingFields
+      missingFields,
     };
-  };
+  }
+
+  const getComplementaryRelation = (relation: string): string => {
+    const relationMap: { [key: string]: string } = {
+      father: "mother",
+      mother: "father",
+      guardian: "co-guardian",
+      grandparent: "spouse",
+      uncle: "aunt",
+      aunt: "uncle",
+      sibling: "parent",
+      other: "family member",
+    }
+    return relationMap[relation] || "family member"
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
     const { name, value } = e.target
+
+    if (name.startsWith("complementary.")) {
+      const key = name.replace("complementary.", "")
+      setForm({
+        ...form,
+        complementaryRelation: {
+          ...form.complementaryRelation,
+          [key]: value,
+        },
+      })
+      return
+    }
 
     if (name.startsWith("child.") && index !== undefined) {
       const key = name.replace("child.", "") as keyof Child
@@ -152,7 +205,6 @@ export default function CompleteProfile() {
     }
   }
 
- 
   const addChild = () => {
     setForm({
       ...form,
@@ -167,65 +219,60 @@ export default function CompleteProfile() {
     })
   }
 
-  
-
   const handleSubmit = async () => {
-    setLoading(true);
-    setMessage("");
-  
+    setLoading(true)
+    setMessage("")
+
     try {
       // 🧹 Remove blank children (name & className both required)
       const cleanedChildren = form.children.filter((child) => {
-        const hasName = child.name?.trim() !== "";
-        const hasClass = child.className?.trim() !== "";
-        return hasName && hasClass;
-      });
-  
+        const hasName = child.name?.trim() !== ""
+        const hasClass = child.className?.trim() !== ""
+        return hasName && hasClass
+      })
+
       const formattedForm = {
         ...form,
         children: cleanedChildren.map((child) => ({
           ...child,
           age: Number(child.age),
         })),
-      };
-  
+      }
+
       const res = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedForm),
-      });
-  
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
-  
-        toast.success("Profile updated successfully")
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Something went wrong")
+
+      toast.success("Profile updated successfully")
 
       // Update Zustand store
-      useAuthStore.getState().setUser(data.user);
-      console.log(" User updated after submit:", useAuthStore.getState().user);
-  
-      router.replace("/");
+      useAuthStore.getState().setUser(data.user)
+      console.log(" User updated after submit:", useAuthStore.getState().user)
+
+      router.replace("/")
     } catch (err: unknown) {
-      let errorMessage = "";
+      let errorMessage = ""
       if (err instanceof Error) {
-        errorMessage = err.message;
+        errorMessage = err.message
       } else if (typeof err === "string") {
-        errorMessage = err;
+        errorMessage = err
       } else {
-        errorMessage = "Unknown error";
+        errorMessage = "Unknown error"
       }
-      toast.error("Profile update failed",{
+      toast.error("Profile update failed", {
         description: errorMessage,
       })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-  
-  
-  
+  }
 
-  const { completion: progress } = calculateProgress();
+  const { completion: progress } = calculateProgress()
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -304,16 +351,6 @@ export default function CompleteProfile() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Educational Background */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Educational Background</CardTitle>
-              <CardDescription>Your educational qualifications</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="highestEducation">Highest Education</Label>
                 <Select
@@ -334,18 +371,10 @@ export default function CompleteProfile() {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="areaOfInterest">Area of Interest</Label>
-                <Input
-                  id="areaOfInterest"
-                  name="areaOfInterest"
-                  value={form.areaOfInterest}
-                  onChange={handleChange}
-                  placeholder="e.g., Mathematics, Science, Literature"
-                />
-              </div>
             </CardContent>
           </Card>
+
+          
 
           {/* Relationship Information */}
           <Card>
@@ -353,7 +382,7 @@ export default function CompleteProfile() {
               <CardTitle>Relationship Information</CardTitle>
               <CardDescription>Your relationship to the child/children</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="relationToChild">Relation to Child</Label>
                 <Select
@@ -375,6 +404,50 @@ export default function CompleteProfile() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Complementary Relationship Fields */}
+              {form.relationToChild && (
+                <div className="border rounded-lg p-4 space-y-4 bg-gray-50">
+                  <h4 className="font-medium text-gray-900">
+                    {getComplementaryRelation(form.relationToChild).charAt(0).toUpperCase() +
+                      getComplementaryRelation(form.relationToChild).slice(1)}{" "}
+                    Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="counterpartnerName">Name</Label>
+                      <Input
+                        id="counterpartnerName"
+                        name="counterpartnerName"
+                        value={form.counterpartnerName}
+                        onChange={handleChange}
+                        placeholder={`Enter ${getComplementaryRelation(form.relationToChild)}'s name`}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="counterpartnerEducation">Education</Label>
+                      <Input
+                        id="counterpartnerEducation"
+                        name="counterpartnerEducation"
+                        value={form.counterpartnerEducation}
+                        onChange={handleChange}
+                        placeholder="Enter education level"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="counterpartnerPhoneNumber">Phone Number</Label>
+                      <Input
+                        id="counterpartnerPhoneNumber"
+                        name="counterpartnerPhoneNumber"
+                        type="tel"
+                        value={form.counterpartnerPhoneNumber}
+                        onChange={handleChange}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

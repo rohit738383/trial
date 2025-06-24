@@ -6,8 +6,10 @@ export const userProfileSchema = z.object({
   state: z.string().optional(),
   zipCode: z.string().optional(),
   highestEducation: z.string().optional(),
-  areaOfInterest: z.string().optional(),
   relationToChild: z.string().optional(),
+  counterpartnerName: z.string().optional(),
+  counterpartnerPhoneNumber: z.string().optional(),
+  counterpartnerEducation: z.string().optional(),
   children: z
     .array(
       z.object({

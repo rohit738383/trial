@@ -34,8 +34,10 @@ model UserProfile {
   state            String?
   zipCode          String?
   highestEducation String?
-  areaOfInterest   String?
   relationToChild  String?
+  counterpartnerName        String?  
+  counterpartnerPhoneNumber String?
+  counterpartnerEducation   String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   user             User     @relation(fields: [userId], references: [id])
