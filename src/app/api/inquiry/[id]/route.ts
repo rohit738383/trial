@@ -7,10 +7,10 @@ const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
-// ✅ DO NOT give any type to `params` — let Next.js infer
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function PUT(
   req: NextRequest,
-  context: any // 👈 use `any` here to bypass the invalid signature error
+  context: any 
 ) {
   try {
     const token = req.cookies.get("accessToken")?.value;
@@ -27,7 +27,7 @@ export async function PUT(
 
     const { status } = updateSchema.parse(await req.json());
 
-    const id = context.params.id; // use context.params safely here
+    const id = context.params.id; 
 
     const inquiry = await prisma.inquiry.update({
       where: { id },
