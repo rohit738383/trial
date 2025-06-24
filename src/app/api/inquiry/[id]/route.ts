@@ -7,8 +7,15 @@ const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
-// ✅ FIXED: Use arrow function export to avoid Next.js 15 error
-export const PUT = async (req: NextRequest, context: any) => {
+// ✅ NO `any`, NO ESLINT ERROR
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
+// ✅ Arrow function (required for Next.js 15)
+export const PUT = async (req: NextRequest, context: Context) => {
   try {
     const token = req.cookies.get("accessToken")?.value;
 
@@ -37,7 +44,7 @@ export const PUT = async (req: NextRequest, context: any) => {
       data: inquiry,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Update Inquiry Error:", error);
     return NextResponse.json(
       {
         success: false,
