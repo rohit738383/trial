@@ -8,10 +8,7 @@ const updateSchema = z.object({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PUT(
-  req: NextRequest,
-  context: any 
-) {
+export async function PUT( req: NextRequest, context: any ) {
   try {
     const token = req.cookies.get("accessToken")?.value;
 
