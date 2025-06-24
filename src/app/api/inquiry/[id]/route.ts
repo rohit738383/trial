@@ -9,7 +9,7 @@ const updateSchema = z.object({
   });
 
 
-export async function PUT(req: NextRequest, { params } : { params :{ id : string}}) {
+export const  PUT = async(req: NextRequest, { params } : { params :{ id : string}}) => {
    try {
 
      const token = req.cookies.get("accessToken")?.value
