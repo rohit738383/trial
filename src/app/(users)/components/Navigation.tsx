@@ -1,11 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Brain, ChevronDown, Menu, LogOut } from "lucide-react"
+import { Brain, ChevronDown, Menu, LogOut, User, Calendar } from "lucide-react"
 import { toast } from "sonner"
-
+import Image from "next/image"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -16,21 +18,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export const Navigation =() => {
+export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const router = useRouter()
-  
+
   const user = useAuthStore((state) => state.user)
   console.log(user)
   const clearUser = useAuthStore((state) => state.clearUser)
@@ -63,33 +58,48 @@ export const Navigation =() => {
   }
 
   const getInitials = (name: string) =>
-    name?.split(" ").map((n) => n[0]).join("").toUpperCase()
+    name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
 
-  const profileCompletion = user?.profileCompletion?.percentage ?? null;
+  const profileCompletion = user?.profileCompletion?.percentage ?? null
 
   const isLoading = user && profileCompletion === undefined
 
   const handleServiceClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!user) {
-      router.push("/sign-up");
-      return;
+      router.push("/sign-up")
+      return
     }
-    toast.info("Coming Soon");
-  };
+    toast.info("Coming Soon")
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Brain className="h-8 w-8 text-blue-600" />
+          {/* <Image
+                src="/logo.jpg?height=600&width=600"
+                alt="Students learning with technology"
+                width={90}
+                height={60}
+                className="rounded-2xl shadow-2xl  max-w-md sm:max-w-lg mx-auto"
+              /> */}
           <span className="text-xl font-bold text-gray-900">Studytainment</span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium ml-6">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <Link href="/about" className="hover:text-blue-600">About Us</Link>
+          <Link href="/" className="hover:text-blue-600">
+            Home
+          </Link>
+          <Link href="/about" className="hover:text-blue-600">
+            About Us
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center space-x-1 hover:text-blue-600">
               <span>Our Services</span>
@@ -98,15 +108,25 @@ export const Navigation =() => {
             <DropdownMenuContent align="start" className="w-56">
               {services.map((service) => (
                 <DropdownMenuItem key={service.name} asChild>
-                  <Link href={service.href} onClick={handleServiceClick}>{service.name}</Link>
+                  <Link href={service.href} onClick={handleServiceClick}>
+                    {service.name}
+                  </Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link href="/why-choose-us" className="hover:text-blue-600">Why Choose Us</Link>
-          <Link href="/seminars" className="hover:text-blue-600">Seminars & Events</Link>
-          <Link href="/contact-form" className="hover:text-blue-600">Contact Us</Link>
-          <Link href="/career" className="hover:text-blue-600">Careers</Link>
+          <Link href="/why-choose-us" className="hover:text-blue-600">
+            Why Choose Us
+          </Link>
+          <Link href="/seminars-events" className="hover:text-blue-600">
+            Seminars & Events
+          </Link>
+          <Link href="/contact-form" className="hover:text-blue-600">
+            Contact Us
+          </Link>
+          <Link href="/career" className="hover:text-blue-600">
+            Careers
+          </Link>
         </nav>
 
         {/* Desktop Auth */}
@@ -131,27 +151,33 @@ export const Navigation =() => {
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                {!isLoading && (
+                {/* Profile Completion UI - Desktop */}
+                {!isLoading && profileCompletion !== null && profileCompletion < 100 && (
                   <div className="px-3 py-2">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Profile Completion</span>
                       <span className="text-xs text-gray-500">{profileCompletion}%</span>
                     </div>
                     <Progress value={profileCompletion} className="h-2" />
-                    {profileCompletion !== null && profileCompletion < 100 && (
-  <Link href="/services/complete-profile">
-    <Button
-      variant="ghost"
-      size="sm"
-      className="w-full mt-2 text-blue-600 hover:text-blue-700"
-    >
-      Complete Profile
-    </Button>
-  </Link>
-)}
-
+                    <Link href="/services/complete-profile">
+                      <Button variant="ghost" size="sm" className="w-full mt-2 text-blue-600 hover:text-blue-700">
+                        Complete Profile
+                      </Button>
+                    </Link>
                   </div>
                 )}
+                <DropdownMenuItem asChild>
+                  <Link href="/services/my-profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/services/your-seminar" className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Your Seminars
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
@@ -160,8 +186,16 @@ export const Navigation =() => {
             </DropdownMenu>
           ) : (
             <>
-              <Link href="/sign-in"><Button variant="ghost" size="sm">Login</Button></Link>
-              <Link href="/sign-up"><Button size="sm" className="bg-blue-600 hover:bg-blue-700">Join Now</Button></Link>
+              <Link href="/sign-in">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  Join Now
+                </Button>
+              </Link>
             </>
           )}
         </div>
@@ -195,27 +229,37 @@ export const Navigation =() => {
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
                   </div>
-                  {!isLoading && (
+                  {/* Profile Completion UI - Mobile */}
+                  {!isLoading && profileCompletion !== null && profileCompletion < 100 && (
                     <div className="mb-3">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium">Profile Completion</span>
                         <span className="text-xs text-gray-500">{profileCompletion}%</span>
                       </div>
                       <Progress value={profileCompletion} className="h-2" />
-                      {profileCompletion !== null && profileCompletion < 100 && (
-    <Link href="/services/complete-profile">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full mt-2 text-blue-600 hover:text-blue-700"
-      >
-        Complete Profile
-      </Button>
-    </Link>
-  )}
-
+                      <Link href="/services/complete-profile">
+                        <Button variant="ghost" size="sm" className="w-full mt-2 text-blue-600 hover:text-blue-700">
+                          Complete Profile
+                        </Button>
+                      </Link>
                     </div>
                   )}
+                  <Link
+                    href="/services/my-profile"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full text-lg font-medium text-gray-900 hover:text-blue-600"
+                  >
+                    <Button variant="outline" size="sm" className="w-full justify-start mb-2">
+                      <User className="mr-2 h-4 w-4" />
+                      My Profile
+                    </Button>
+                  </Link>
+                  <Link href="/services/your-seminar" onClick={() => setIsOpen(false)} className="w-full">
+                    <Button variant="outline" size="sm" className="w-full justify-start mb-2">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Your Seminars
+                    </Button>
+                  </Link>
                   <Button
                     variant="outline"
                     size="sm"
@@ -233,8 +277,12 @@ export const Navigation =() => {
 
               {/* Mobile nav links */}
               <nav className="flex flex-col space-y-4 px-6">
-                <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
-                <Link href="/about" onClick={() => setIsOpen(false)} className="text-lg font-medium">About Us</Link>
+                <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  Home
+                </Link>
+                <Link href="/about" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  About Us
+                </Link>
                 <div className="space-y-2">
                   <p className="text-lg font-medium text-gray-900">Our Services</p>
                   <div className="pl-4 space-y-2">
@@ -242,7 +290,10 @@ export const Navigation =() => {
                       <Link
                         key={service.name}
                         href={service.href}
-                        onClick={(e) => { handleServiceClick(e); setIsOpen(false); }}
+                        onClick={(e) => {
+                          handleServiceClick(e)
+                          setIsOpen(false)
+                        }}
                         className="block text-gray-600 hover:text-blue-600"
                       >
                         {service.name}
@@ -250,14 +301,24 @@ export const Navigation =() => {
                     ))}
                   </div>
                 </div>
-                <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">Why Choose Us</Link>
-                <Link href="/seminars" onClick={() => setIsOpen(false)} className="text-lg font-medium">Seminars & Events</Link>
-                <Link href="/contact-form" onClick={() => setIsOpen(false)} className="text-lg font-medium">Contact Us</Link>
-                <Link href="/career" onClick={() => setIsOpen(false)} className="text-lg font-medium">Careers</Link>
+                <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  Why Choose Us
+                </Link>
+                <Link href="/seminars-events" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  Seminars & Events
+                </Link>
+                <Link href="/contact-form" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  Contact Us
+                </Link>
+                <Link href="/career" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  Careers
+                </Link>
                 {!user && (
                   <div className="flex flex-col space-y-2 pt-4 border-t">
                     <Link href="/sign-in" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full">Login</Button>
+                      <Button variant="outline" className="w-full">
+                        Login
+                      </Button>
                     </Link>
                     <Link href="/sign-up" onClick={() => setIsOpen(false)}>
                       <Button className="w-full bg-blue-600 hover:bg-blue-700">Join Now</Button>
