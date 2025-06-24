@@ -7,8 +7,8 @@ const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PUT( req: NextRequest, context: any ) {
+// ✅ FIXED: Use arrow function export to avoid Next.js 15 error
+export const PUT = async (req: NextRequest, context: any) => {
   try {
     const token = req.cookies.get("accessToken")?.value;
 
@@ -24,7 +24,7 @@ export async function PUT( req: NextRequest, context: any ) {
 
     const { status } = updateSchema.parse(await req.json());
 
-    const id = context.params.id; 
+    const id = context.params.id;
 
     const inquiry = await prisma.inquiry.update({
       where: { id },
@@ -47,4 +47,4 @@ export async function PUT( req: NextRequest, context: any ) {
       { status: 500 }
     );
   }
-}
+};
