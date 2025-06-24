@@ -7,12 +7,9 @@ const updateSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "RESOLVED"]),
 });
 
-// ✅ DON'T declare your own type — use inline destructuring
-// ✅ DON'T use `any` — ESLint will complain
-export const PUT = async (
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) => {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const PUT = async (req: NextRequest, context: any) => {
   try {
     const token = req.cookies.get("accessToken")?.value;
 
@@ -29,7 +26,7 @@ export const PUT = async (
     const { status } = updateSchema.parse(await req.json());
 
     const inquiry = await prisma.inquiry.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: { status },
     });
 
