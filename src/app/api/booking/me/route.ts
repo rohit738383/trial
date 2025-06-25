@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyRefreshToken } from "@/lib/auth";
+import { verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 
 
 export async function GET(req : NextRequest) {
     try {
-        const token = req.cookies.get("refreshToken")?.value
+        const token = req.cookies.get("accessToken")?.value
 
         if(!token){
             return NextResponse.json({
@@ -15,18 +15,19 @@ export async function GET(req : NextRequest) {
             },{status: 401})
         }
 
-        const user = await verifyRefreshToken(token)
+        const user = await verifyJWT(token)
     
-        if(!user || !user.userId){
+        if(!user || !user.id){
             return NextResponse.json({
                 success: false,
                 message: "Please login to view your bookings",
-            },{status: 401})
+            },{status: 403})
         }
 
         const bookings = await prisma.booking.findMany({
             where: {
-              userId: parseInt(user.userId),
+              userId: parseInt(user.id),
+              status : "PAID",
             },
             include: {
               seminar: {

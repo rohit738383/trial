@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyJWT } from "@/lib/auth";
+import {  verifyRefreshToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createBookingSchema } from "@/schemas/bookingSchema";
 import { razorpay } from "@/lib/razorpay";
 
 export async function POST(req: NextRequest) {
   try {
-    const token = req.cookies.get("accessToken")?.value;
+    const token = req.cookies.get("refreshToken")?.value;
 
     if (!token) {
       return NextResponse.json(
@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = await verifyJWT(token);
+    const user = await verifyRefreshToken(token);
 
-    if (!user || !user.id) {
+    if (!user || !user.userId) {
       return NextResponse.json(
         {
           success: false,
@@ -93,7 +93,7 @@ const totalPrice = seminar.price.mul(quantity);
 
 const booking = await prisma.booking.create({
     data :{
-        userId : Number(user.id),
+        userId : Number(user.userId),
         seminarId,
         quantity,
         totalPrice,
