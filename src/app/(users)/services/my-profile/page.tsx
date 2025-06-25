@@ -419,7 +419,7 @@ export default function MyProfilePage() {
                       <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-500">Address</p>
-                        <p className="text-gray-900">{profileData.profile?.address || "Not specified"}</p>
+                        <p className="text-gray-900 break-words whitespace-pre-line">{profileData.profile?.address || "Not specified"}</p>
                         <div className="flex gap-4 mt-2 text-sm text-gray-600">
                           <span>{profileData.profile?.city || "N/A"}</span>
                           <span>{profileData.profile?.state || "N/A"}</span>

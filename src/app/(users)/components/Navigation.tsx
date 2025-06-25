@@ -5,7 +5,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Brain, ChevronDown, Menu, LogOut, User, Calendar } from "lucide-react"
+import { Brain, ChevronDown, ChevronUp, Menu, LogOut, User, Calendar } from "lucide-react"
 import { toast } from "sonner"
 // import Image from "next/image"
 import { useAuthStore } from "@/stores/useAuthStore"
@@ -30,6 +30,8 @@ export const Navigation = () => {
   console.log(user)
   const clearUser = useAuthStore((state) => state.clearUser)
   const fetchUser = useAuthStore((state) => state.fetchUser)
+
+  const [servicesOpen, setServicesOpen] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -260,18 +262,6 @@ export const Navigation = () => {
                       Your Seminars
                     </Button>
                   </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-red-600 hover:text-red-700"
-                    onClick={() => {
-                      handleLogout()
-                      setIsOpen(false)
-                    }}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
-                  </Button>
                 </div>
               )}
 
@@ -284,22 +274,35 @@ export const Navigation = () => {
                   About Us
                 </Link>
                 <div className="space-y-2">
-                  <p className="text-lg font-medium text-gray-900">Our Services</p>
-                  <div className="pl-4 space-y-2">
-                    {services.map((service) => (
-                      <Link
-                        key={service.name}
-                        href={service.href}
-                        onClick={(e) => {
-                          handleServiceClick(e)
-                          setIsOpen(false)
-                        }}
-                        className="block text-gray-600 hover:text-blue-600"
-                      >
-                        {service.name}
-                      </Link>
-                    ))}
-                  </div>
+                  <button
+                    type="button"
+                    className="flex items-center w-full text-lg font-medium text-gray-900 hover:text-blue-600 focus:outline-none"
+                    onClick={() => setServicesOpen((prev) => !prev)}
+                  >
+                    <span>Our Services</span>
+                    {servicesOpen ? (
+                      <ChevronUp className="ml-2 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    )}
+                  </button>
+                  {servicesOpen && (
+                    <div className="pl-4 space-y-2">
+                      {services.map((service) => (
+                        <Link
+                          key={service.name}
+                          href={service.href}
+                          onClick={(e) => {
+                            handleServiceClick(e)
+                            setIsOpen(false)
+                          }}
+                          className="block text-gray-600 hover:text-blue-600"
+                        >
+                          {service.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">
                   Why Choose Us
@@ -324,6 +327,21 @@ export const Navigation = () => {
                       <Button className="w-full bg-blue-600 hover:bg-blue-700">Join Now</Button>
                     </Link>
                   </div>
+                )}
+                {/* Move logout button to the very bottom, only if user is logged in */}
+                {user && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-red-600 hover:text-red-700 mt-6"
+                    onClick={() => {
+                      handleLogout()
+                      setIsOpen(false)
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
                 )}
               </nav>
             </div>
