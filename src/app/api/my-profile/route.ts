@@ -100,7 +100,12 @@ export async function PUT(request: NextRequest) {
       where: { userId },
     });
 
-    const profileDataToUpdate: any = {};
+    const profileDataToUpdate: Partial<{
+      address: string;
+      city: string;
+      state: string;
+      zipCode: string;
+    }> = {};
     if (address) profileDataToUpdate.address = address;
     if (city) profileDataToUpdate.city = city;
     if (state) profileDataToUpdate.state = state;

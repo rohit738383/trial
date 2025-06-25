@@ -23,7 +23,7 @@ export function calculateProfileCompletion(
   filledFields += parentFieldValues.filter((v) => String(v).trim() !== "").length;
 
   // Children fields
-  let childFields: { name: string; value: string; childIndex: number }[] = [];
+  const childFields: { name: string; value: string; childIndex: number }[] = [];
   children.forEach((child, idx) => {
     childFields.push({ name: `child_${idx}_name`, value: child.name, childIndex: idx });
     childFields.push({ name: `child_${idx}_age`, value: String(child.age ?? ""), childIndex: idx });
@@ -33,7 +33,7 @@ export function calculateProfileCompletion(
   filledFields += childFields.filter((f) => String(f.value ?? "").trim() !== "").length;
 
   let totalFields = profileFields.length + childFields.length;
-  let missingFields = [
+  const missingFields = [
     ...profileFields.filter((field) => !profile?.[field] || String(profile?.[field]).trim() === ""),
     ...childFields.filter((field) => !String(field.value ?? "").trim()).map((field) => field.name),
   ];

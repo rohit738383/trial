@@ -120,7 +120,7 @@ export default function CompleteProfile() {
     ]
 
     // For each child, check all 4 fields
-    let childFields: { name: string; value: string; childIndex: number }[] = [];
+    const childFields: { name: string; value: string; childIndex: number }[] = [];
     form.children.forEach((child, idx) => {
       childFields.push({ name: `child_${idx}_name`, value: child.name, childIndex: idx });
       childFields.push({ name: `child_${idx}_age`, value: child.age, childIndex: idx });

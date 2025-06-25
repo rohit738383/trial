@@ -202,7 +202,7 @@ export default function MyProfilePage() {
             <X className="h-8 w-8 text-red-500" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Profile</h2>
-          <p className="text-gray-600 mb-6">We couldn't fetch your profile data. Please try again.</p>
+          <p className="text-gray-600 mb-6">{"We couldn't fetch your profile data. Please try again."}</p>
           <Button onClick={fetchProfile} className="w-full">
             <Sparkles className="h-4 w-4 mr-2" />
             Retry
