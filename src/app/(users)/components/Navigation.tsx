@@ -118,7 +118,7 @@ export const Navigation = () => {
           <Link href="/why-choose-us" className="hover:text-blue-600">
             Why Choose Us
           </Link>
-          <Link href="/seminars-events" className="hover:text-blue-600">
+          <Link href="/seminars" className="hover:text-blue-600">
             Seminars & Events
           </Link>
           <Link href="/contact-form" className="hover:text-blue-600">
@@ -304,7 +304,7 @@ export const Navigation = () => {
                 <Link href="/why-choose-us" onClick={() => setIsOpen(false)} className="text-lg font-medium">
                   Why Choose Us
                 </Link>
-                <Link href="/seminars-events" onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                <Link href="/seminars" onClick={() => setIsOpen(false)} className="text-lg font-medium">
                   Seminars & Events
                 </Link>
                 <Link href="/contact-form" onClick={() => setIsOpen(false)} className="text-lg font-medium">

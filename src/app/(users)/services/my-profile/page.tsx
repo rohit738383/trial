@@ -22,6 +22,8 @@ import {
   Star,
   Heart,
   Sparkles,
+  Home,
+  UserCheck,
 } from "lucide-react"
 import axios from "axios"
 
@@ -66,7 +68,7 @@ export default function MyProfilePage() {
       const res = await axios.get("/api/my-profile", {
         method: "GET",
         withCredentials: true,
-      });
+      })
       setProfileData(res.data)
       setTempPhone(res.data.phoneNumber)
       setTempAddress({
@@ -112,7 +114,10 @@ export default function MyProfilePage() {
   const handleAddressSave = async () => {
     try {
       await axios.put("/api/my-profile", {
-        profile: { ...tempAddress },
+        address: tempAddress.address,
+        city: tempAddress.city,
+        state: tempAddress.state,
+        zipcode: tempAddress.zipCode,
       })
       setProfileData((prev) => {
         if (!prev) return null
@@ -130,7 +135,10 @@ export default function MyProfilePage() {
           ...prev,
           profile: {
             ...existingProfile,
-            ...tempAddress,
+            address: tempAddress.address,
+            city: tempAddress.city,
+            state: tempAddress.state,
+            zipCode: tempAddress.zipCode,
           },
         }
       })
@@ -152,28 +160,28 @@ export default function MyProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
-        <div className="container mx-auto px-3 py-4 sm:p-6 max-w-sm sm:max-w-6xl">
-          {/* Loading Hero Section */}
-          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 p-3 sm:p-6 lg:p-8 mb-4 sm:mb-8">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-              <Skeleton className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white/20" />
-              <div className="space-y-3 text-center sm:text-left">
-                <Skeleton className="h-6 sm:h-8 w-48 sm:w-64 bg-white/20 mx-auto sm:mx-0" />
-                <Skeleton className="h-4 w-32 sm:w-48 bg-white/20 mx-auto sm:mx-0" />
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Loading Header */}
+          <div className="bg-white rounded-2xl shadow-sm border p-8 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <Skeleton className="h-24 w-24 rounded-full" />
+              <div className="space-y-3 text-center md:text-left">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-6 w-32" />
               </div>
             </div>
           </div>
 
           {/* Loading Cards */}
-          <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <Card key={i} className="shadow-sm border-0">
                 <CardHeader>
                   <Skeleton className="h-6 w-32" />
                 </CardHeader>
-                <CardContent className="p-2 sm:p-4 lg:p-6 space-y-2 sm:space-y-4 lg:space-y-6">
+                <CardContent className="space-y-4">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
@@ -188,22 +196,17 @@ export default function MyProfilePage() {
 
   if (!profileData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 flex items-center justify-center">
-        <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-sm p-4 sm:p-8 text-center mx-3 sm:mx-0 max-w-xs sm:max-w-md">
-          <div className="mb-4">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <X className="h-8 w-8 text-red-500" />
-            </div>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Oops! Something went wrong</h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-6">Failed to load your profile data</p>
-            <Button
-              onClick={fetchProfile}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-full sm:w-auto"
-            >
-              <Sparkles className="h-4 w-4 mr-2" />
-              Try Again
-            </Button>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center p-8">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="h-8 w-8 text-red-500" />
           </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Profile</h2>
+          <p className="text-gray-600 mb-6">We couldn't fetch your profile data. Please try again.</p>
+          <Button onClick={fetchProfile} className="w-full">
+            <Sparkles className="h-4 w-4 mr-2" />
+            Retry
+          </Button>
         </Card>
       </div>
     )
@@ -218,32 +221,30 @@ export default function MyProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
-      <div className="container mx-auto px-3 py-4 sm:p-6 max-w-sm sm:max-w-6xl">
-        {/* Hero Profile Section */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 p-3 sm:p-6 lg:p-8 mb-4 sm:mb-8 shadow-2xl">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-white/10 rounded-full -translate-y-16 translate-x-16 sm:-translate-y-32 sm:translate-x-32"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-48 sm:h-48 bg-white/10 rounded-full translate-y-12 -translate-x-12 sm:translate-y-24 sm:-translate-x-24"></div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Profile Header */}
+        <div className="bg-white rounded-2xl shadow-sm border p-8 mb-8">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="relative">
+              <Avatar className="h-24 w-24 border-4 border-gray-100">
+                <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                <AvatarFallback className="text-2xl font-bold bg-gray-900 text-white">
+                  {getInitials(profileData.fullName)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
+                <Star className="h-4 w-4 text-white fill-current" />
+              </div>
+            </div>
 
-          <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 text-center">
-            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-4 border-white/30 shadow-xl">
-              <AvatarImage src="/placeholder.svg?height=96&width=96" />
-              <AvatarFallback className="text-xl sm:text-2xl font-bold bg-white/20 text-white">
-                {getInitials(profileData.fullName)}
-              </AvatarFallback>
-            </Avatar>
-
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2 flex-wrap">
-                <span className="break-words">{profileData.fullName}</span>
-                <Star className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-300 fill-current flex-shrink-0" />
-              </h1>
-              <p className="text-white/90 text-sm sm:text-base lg:text-lg mb-3 flex items-center gap-2 justify-center flex-wrap">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                <span className="break-all">{profileData.email}</span>
+            <div className="text-center md:text-left flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{profileData.fullName}</h1>
+              <p className="text-gray-600 mb-3 flex items-center gap-2 justify-center md:justify-start">
+                <Mail className="h-4 w-4" />
+                {profileData.email}
               </p>
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 text-xs">
+              <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                 <Heart className="h-3 w-3 mr-1 fill-current" />
                 Family Member
               </Badge>
@@ -251,210 +252,163 @@ export default function MyProfilePage() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Personal Information */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+          <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <User className="h-5 w-5 text-blue-600" />
+                </div>
                 Personal Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 sm:p-4 lg:p-6 space-y-2 sm:space-y-4 lg:space-y-6">
-              <div className="grid gap-2 sm:gap-4">
-                <div className="p-2 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-100">
-                  <Label className="text-xs font-semibold text-emerald-700 flex items-center gap-1 sm:gap-2">
-                    <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                    Full Name
-                  </Label>
-                  <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                    {profileData.fullName}
-                  </p>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <User className="h-4 w-4 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Full Name</p>
+                    <p className="text-gray-900">{profileData.fullName}</p>
+                  </div>
                 </div>
 
-                <div className="p-2 sm:p-4 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-100">
-                  <Label className="text-xs font-semibold text-blue-700 flex items-center gap-1 sm:gap-2">
-                    <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
-                    Email Address
-                  </Label>
-                  <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-all">
-                    {profileData.email}
-                  </p>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Email</p>
+                    <p className="text-gray-900 break-all">{profileData.email}</p>
+                  </div>
                 </div>
 
                 {/* Phone Number with Edit */}
-                <div className="p-2 sm:p-4 bg-purple-50 rounded-lg sm:rounded-xl border border-purple-100">
-                  <Label className="text-xs font-semibold text-purple-700 flex items-center gap-1 sm:gap-2">
-                    <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
-                    Phone Number
-                  </Label>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Phone className="h-4 w-4 text-gray-500" />
+                    <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                  </div>
                   {editingPhone ? (
-                    <div className="space-y-2 mt-2">
-                      <Input
-                        value={tempPhone}
-                        onChange={(e) => setTempPhone(e.target.value)}
-                        className="w-full border-purple-200 focus:border-purple-400 text-sm sm:text-base"
-                      />
+                    <div className="space-y-3">
+                      <Input value={tempPhone} onChange={(e) => setTempPhone(e.target.value)} className="w-full" />
                       <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={handlePhoneSave}
-                          className="bg-green-500 hover:bg-green-600 flex-1 text-xs"
-                        >
-                          <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                        <Button size="sm" onClick={handlePhoneSave} className="flex-1">
+                          <Save className="h-4 w-4 mr-1" />
                           Save
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={handlePhoneCancel}
-                          className="border-red-200 text-red-600 hover:bg-red-50 flex-1 text-xs"
-                        >
-                          <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                        <Button size="sm" variant="outline" onClick={handlePhoneCancel} className="flex-1">
+                          <X className="h-4 w-4 mr-1" />
                           Cancel
                         </Button>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between gap-2 mt-1">
-                      <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 break-all flex-1">
-                        {profileData.phoneNumber}
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handlePhoneEdit}
-                        className="border-purple-200 text-purple-600 hover:bg-purple-50 flex-shrink-0"
-                      >
-                        <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <div className="flex items-center justify-between">
+                      <p className="text-gray-900">{profileData.phoneNumber}</p>
+                      <Button size="sm" variant="ghost" onClick={handlePhoneEdit}>
+                        <Edit2 className="h-4 w-4" />
                       </Button>
                     </div>
                   )}
                 </div>
 
-                <div className="p-2 sm:p-4 bg-orange-50 rounded-lg sm:rounded-xl border border-orange-100">
-                  <Label className="text-xs font-semibold text-orange-700 flex items-center gap-1 sm:gap-2">
-                    <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4" />
-                    Highest Education
-                  </Label>
-                  <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                    {profileData.profile?.highestEducation || "Not specified"}
-                  </p>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <GraduationCap className="h-4 w-4 text-gray-500" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Education</p>
+                    <p className="text-gray-900">{profileData.profile?.highestEducation || "Not specified"}</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Address Information */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
+          <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Home className="h-5 w-5 text-green-600" />
+                </div>
                 Address Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 sm:p-4 lg:p-6 space-y-2 sm:space-y-4 lg:space-y-6">
+            <CardContent>
               {editingAddress ? (
-                <div className="space-y-2 sm:space-y-4">
+                <div className="space-y-4">
                   <div>
-                    <Label htmlFor="address" className="text-xs font-semibold text-gray-700">
+                    <Label htmlFor="address" className="text-sm font-medium text-gray-700">
                       Street Address
                     </Label>
                     <Input
                       id="address"
                       value={tempAddress.address}
                       onChange={(e) => setTempAddress((prev) => ({ ...prev, address: e.target.value }))}
-                      className="mt-1 border-rose-200 focus:border-rose-400 text-sm sm:text-base"
+                      className="mt-1"
                     />
                   </div>
-                  <div className="grid grid-cols-1 gap-2 sm:gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="city" className="text-xs font-semibold text-gray-700">
+                      <Label htmlFor="city" className="text-sm font-medium text-gray-700">
                         City
                       </Label>
                       <Input
                         id="city"
                         value={tempAddress.city}
                         onChange={(e) => setTempAddress((prev) => ({ ...prev, city: e.target.value }))}
-                        className="mt-1 border-rose-200 focus:border-rose-400 text-sm sm:text-base"
+                        className="mt-1"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="state" className="text-xs font-semibold text-gray-700">
+                      <Label htmlFor="state" className="text-sm font-medium text-gray-700">
                         State
                       </Label>
                       <Input
                         id="state"
                         value={tempAddress.state}
                         onChange={(e) => setTempAddress((prev) => ({ ...prev, state: e.target.value }))}
-                        className="mt-1 border-rose-200 focus:border-rose-400 text-sm sm:text-base"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="zipCode" className="text-xs font-semibold text-gray-700">
-                        Zip Code
-                      </Label>
-                      <Input
-                        id="zipCode"
-                        value={tempAddress.zipCode}
-                        onChange={(e) => setTempAddress((prev) => ({ ...prev, zipCode: e.target.value }))}
-                        className="mt-1 border-rose-200 focus:border-rose-400 text-sm sm:text-base"
+                        className="mt-1"
                       />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2 pt-2">
-                    <Button
-                      onClick={handleAddressSave}
-                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full text-sm sm:text-base"
-                    >
+                  <div>
+                    <Label htmlFor="zipCode" className="text-sm font-medium text-gray-700">
+                      Zip Code
+                    </Label>
+                    <Input
+                      id="zipCode"
+                      value={tempAddress.zipCode}
+                      onChange={(e) => setTempAddress((prev) => ({ ...prev, zipCode: e.target.value }))}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button onClick={handleAddressSave} className="flex-1">
                       <Save className="h-4 w-4 mr-2" />
                       Save Changes
                     </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handleAddressCancel}
-                      className="border-red-200 text-red-600 hover:bg-red-50 w-full text-sm sm:text-base"
-                    >
+                    <Button variant="outline" onClick={handleAddressCancel} className="flex-1">
                       <X className="h-4 w-4 mr-2" />
                       Cancel
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2 sm:space-y-4">
-                  <div className="grid gap-2 sm:gap-4">
-                    <div className="p-2 sm:p-4 bg-rose-50 rounded-lg sm:rounded-xl border border-rose-100">
-                      <Label className="text-xs font-semibold text-rose-700">Street Address</Label>
-                      <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                        {profileData.profile?.address || "Not specified"}
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-                      <div className="p-2 sm:p-4 bg-pink-50 rounded-lg sm:rounded-xl border border-pink-100">
-                        <Label className="text-xs font-semibold text-pink-700">City</Label>
-                        <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                          {profileData.profile?.city || "Not specified"}
-                        </p>
-                      </div>
-                      <div className="p-2 sm:p-4 bg-rose-50 rounded-lg sm:rounded-xl border border-rose-100">
-                        <Label className="text-xs font-semibold text-rose-700">State</Label>
-                        <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                          {profileData.profile?.state || "Not specified"}
-                        </p>
-                      </div>
-                      <div className="p-2 sm:p-4 bg-pink-50 rounded-lg sm:rounded-xl border border-pink-100 sm:col-span-2 lg:col-span-1">
-                        <Label className="text-xs font-semibold text-pink-700">Zip Code</Label>
-                        <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                          {profileData.profile?.zipCode || "Not specified"}
-                        </p>
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-500">Address</p>
+                        <p className="text-gray-900">{profileData.profile?.address || "Not specified"}</p>
+                        <div className="flex gap-4 mt-2 text-sm text-gray-600">
+                          <span>{profileData.profile?.city || "N/A"}</span>
+                          <span>{profileData.profile?.state || "N/A"}</span>
+                          <span>{profileData.profile?.zipCode || "N/A"}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    onClick={handleAddressEdit}
-                    className="border-rose-200 text-rose-600 hover:bg-rose-50 w-full sm:w-auto text-sm sm:text-base"
-                  >
+                  <Button variant="outline" onClick={handleAddressEdit} className="w-full">
                     <Edit2 className="h-4 w-4 mr-2" />
                     Edit Address
                   </Button>
@@ -464,94 +418,90 @@ export default function MyProfilePage() {
           </Card>
 
           {/* Partner Information */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Partner & Guardian Info
+          <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <UserCheck className="h-5 w-5 text-purple-600" />
+                </div>
+                Partner Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 sm:p-4 lg:p-6 space-y-2 sm:space-y-4 lg:space-y-6">
-              <div className="p-2 sm:p-4 bg-indigo-50 rounded-lg sm:rounded-xl border border-indigo-100">
-                <Label className="text-xs font-semibold text-indigo-700">Partner Name</Label>
-                <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                  {profileData.profile?.counterpartnerName || "Not specified"}
-                </p>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <User className="h-4 w-4 text-gray-500" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Partner Name</p>
+                  <p className="text-gray-900">{profileData.profile?.counterpartnerName || "Not specified"}</p>
+                </div>
               </div>
-              <div className="p-2 sm:p-4 bg-purple-50 rounded-lg sm:rounded-xl border border-purple-100">
-                <Label className="text-xs font-semibold text-purple-700 flex items-center gap-1 sm:gap-2">
-                  <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
-                  Partner Phone
-                </Label>
-                <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-all">
-                  {profileData.profile?.counterpartnerPhoneNumber || "Not specified"}
-                </p>
+
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <Phone className="h-4 w-4 text-gray-500" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Partner Phone</p>
+                  <p className="text-gray-900">{profileData.profile?.counterpartnerPhoneNumber || "Not specified"}</p>
+                </div>
               </div>
-              <div className="p-2 sm:p-4 bg-indigo-50 rounded-lg sm:rounded-xl border border-indigo-100">
-                <Label className="text-xs font-semibold text-indigo-700 flex items-center gap-1 sm:gap-2">
-                  <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4" />
-                  Partner Education
-                </Label>
-                <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-800 mt-1 break-words">
-                  {profileData.profile?.counterpartnerEducation || "Not specified"}
-                </p>
+
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <GraduationCap className="h-4 w-4 text-gray-500" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Partner Education</p>
+                  <p className="text-gray-900">{profileData.profile?.counterpartnerEducation || "Not specified"}</p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Children Information */}
-          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5 fill-current" />
+          <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-gray-900">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Heart className="h-5 w-5 text-orange-600 fill-current" />
+                </div>
                 Children
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 sm:p-4 lg:p-6 space-y-2 sm:space-y-4 lg:space-y-6">
+            <CardContent>
               {profileData.children && profileData.children.length > 0 ? (
-                <div className="grid gap-2 sm:gap-4">
+                <div className="space-y-4">
                   {profileData.children.map((child, index) => (
                     <div
                       key={child.id}
-                      className="relative overflow-hidden rounded-lg sm:rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-2 sm:p-4 lg:p-6 hover:shadow-lg transition-all duration-300"
+                      className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-amber-200/30 to-orange-200/30 rounded-full -translate-y-6 translate-x-6 sm:-translate-y-8 sm:translate-x-8 lg:-translate-y-10 lg:translate-x-10"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-start gap-2 mb-2">
-                          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 border-2 border-amber-200 flex-shrink-0">
-                            <AvatarFallback className="bg-gradient-to-br from-amber-400 to-orange-400 text-white font-bold text-xs sm:text-sm lg:text-base">
-                              {getInitials(child.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-base sm:text-lg lg:text-xl text-gray-800 break-words leading-tight">
-                              {child.name}
-                            </h3>
-                            <div className="flex flex-col gap-1 mt-1">
-                              <span className="flex items-center gap-1 text-xs text-gray-600">
-                                <Calendar className="h-3 w-3 flex-shrink-0" />
-                                <span>{child.age} years old</span>
-                              </span>
-                              <span className="flex items-center gap-1 text-xs text-gray-600">
-                                <GraduationCap className="h-3 w-3 flex-shrink-0" />
-                                <span className="break-words">{child.className}</span>
-                              </span>
-                            </div>
-                          </div>
+                      <Avatar className="h-12 w-12 border-2 border-orange-200">
+                        <AvatarFallback className="bg-orange-500 text-white font-bold">
+                          {getInitials(child.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900">{child.name}</h3>
+                        <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {child.age} years old
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <GraduationCap className="h-3 w-3" />
+                            {child.className}
+                          </span>
                         </div>
-                        <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
-                          Child #{index + 1}
-                        </Badge>
                       </div>
+                      <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+                        Child #{index + 1}
+                      </Badge>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-6 sm:py-8">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                    <Users className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500" />
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-600 text-sm sm:text-base lg:text-lg">No children information available</p>
+                  <p className="text-gray-500">No children information available</p>
                 </div>
               )}
             </CardContent>
