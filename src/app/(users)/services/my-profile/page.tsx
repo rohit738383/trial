@@ -88,17 +88,37 @@ export default function MyProfilePage() {
     fetchProfile()
   }, [])
 
+  const formatPhoneNumber = (phone: string) => {
+   
+    const digits = phone.replace(/\D/g, "");
+  
+    if (digits.length === 12 && digits.startsWith("91")) {
+      return "+" + digits;
+    }
+   
+    if (digits.length === 10) {
+      return "+91" + digits;
+    }
+ 
+    if (digits.length > 10) {
+      return "+91" + digits.slice(-10);
+    }
+
+    return phone;
+  };
+
   const handlePhoneEdit = () => {
     setEditingPhone(true)
   }
 
   const handlePhoneSave = async () => {
     try {
-      await axios.put("/api/my-profile", { phoneNumber: tempPhone })
-      setProfileData((prev) => (prev ? { ...prev, phoneNumber: tempPhone } : null))
-      setEditingPhone(false)
+      const formattedPhone = formatPhoneNumber(tempPhone);
+      await axios.put("/api/my-profile", { phoneNumber: formattedPhone });
+      setProfileData((prev) => (prev ? { ...prev, phoneNumber: formattedPhone } : null));
+      setEditingPhone(false);
     } catch (err) {
-      console.error("Error updating phone", err)
+      console.error("Error updating phone", err);
     }
   }
 
@@ -255,7 +275,7 @@ export default function MyProfilePage() {
         <div className="grid gap-6 md:grid-cols-2">
           {/* Personal Information */}
           <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
-            <CardHeader className="pb-4">
+            <CardHeader >
               <CardTitle className="flex items-center gap-2 text-gray-900">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <User className="h-5 w-5 text-blue-600" />
@@ -289,7 +309,7 @@ export default function MyProfilePage() {
                   </div>
                   {editingPhone ? (
                     <div className="space-y-3">
-                      <Input value={tempPhone} onChange={(e) => setTempPhone(e.target.value)} className="w-full" />
+                      <Input maxLength={13} value={tempPhone} onChange={(e) => setTempPhone(e.target.value)} className="w-full" />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={handlePhoneSave} className="flex-1">
                           <Save className="h-4 w-4 mr-1" />
@@ -324,7 +344,7 @@ export default function MyProfilePage() {
 
           {/* Address Information */}
           <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
-            <CardHeader className="pb-4">
+            <CardHeader >
               <CardTitle className="flex items-center gap-2 text-gray-900">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <Home className="h-5 w-5 text-green-600" />
@@ -419,7 +439,7 @@ export default function MyProfilePage() {
 
           {/* Partner Information */}
           <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
-            <CardHeader className="pb-4">
+            <CardHeader >
               <CardTitle className="flex items-center gap-2 text-gray-900">
                 <div className="p-2 bg-purple-100 rounded-lg">
                   <UserCheck className="h-5 w-5 text-purple-600" />
@@ -456,7 +476,7 @@ export default function MyProfilePage() {
 
           {/* Children Information */}
           <Card className="shadow-sm border-0 hover:shadow-md transition-shadow">
-            <CardHeader className="pb-4">
+            <CardHeader >
               <CardTitle className="flex items-center gap-2 text-gray-900">
                 <div className="p-2 bg-orange-100 rounded-lg">
                   <Heart className="h-5 w-5 text-orange-600 fill-current" />

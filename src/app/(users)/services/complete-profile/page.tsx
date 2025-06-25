@@ -1,30 +1,42 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import Link from "next/link"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/stores/useAuthStore"
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type Child = {
-  name: string
-  age: string
-  gender: "MALE" | "FEMALE"
-  className: string
-}
+  name: string;
+  age: string;
+  gender: "MALE" | "FEMALE";
+  className: string;
+};
 
 export default function CompleteProfile() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState("")
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const [form, setForm] = useState({
     address: "",
@@ -33,9 +45,9 @@ export default function CompleteProfile() {
     zipCode: "",
     highestEducation: "",
     relationToChild: "",
-    counterpartnerName: "",       
-    counterpartnerPhoneNumber: "", 
-    counterpartnerEducation: "",   
+    counterpartnerName: "",
+    counterpartnerPhoneNumber: "",
+    counterpartnerEducation: "",
     children: [
       {
         name: "",
@@ -49,7 +61,7 @@ export default function CompleteProfile() {
       education: "",
       phoneNumber: "",
     },
-  })
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -57,13 +69,13 @@ export default function CompleteProfile() {
         const res = await fetch("/api/profile", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
-        })
+        });
 
-        if (!res.ok) throw new Error("Failed to fetch profile")
+        if (!res.ok) throw new Error("Failed to fetch profile");
 
-        const data = await res.json()
+        const data = await res.json();
         if (data.profile) {
-          const { children = [], ...rest } = data.profile
+          const { children = [], ...rest } = data.profile;
           setForm({
             address: rest.address ?? "",
             city: rest.city ?? "",
@@ -74,39 +86,43 @@ export default function CompleteProfile() {
             counterpartnerName: rest.counterpartnerName ?? "",
             counterpartnerPhoneNumber: rest.counterpartnerPhoneNumber ?? "",
             counterpartnerEducation: rest.counterpartnerEducation ?? "",
-            children: children.length > 0
-              ? children.map((child: Child) => ({
-                  ...child,
-                  age: child.age.toString(),
-                }))
-              : [
-                  {
-                    name: "",
-                    age: "",
-                    gender: "MALE",
-                    className: "",
-                  },
-                ],
+            children:
+              children.length > 0
+                ? children.map((child: Child) => ({
+                    ...child,
+                    age: child.age.toString(),
+                  }))
+                : [
+                    {
+                      name: "",
+                      age: "",
+                      gender: "MALE",
+                      className: "",
+                    },
+                  ],
             complementaryRelation: {
               name: "",
               education: "",
               phoneNumber: "",
             },
-          })
+          });
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
-          console.error("Error loading profile", error.message)
+          console.error("Error loading profile", error.message);
         } else {
-          console.error("Error loading profile", error)
+          console.error("Error loading profile", error);
         }
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
-  const calculateProgress = (): { completion: number; missingFields: string[] } => {
+  const calculateProgress = (): {
+    completion: number;
+    missingFields: string[];
+  } => {
     const basicFields = [
       { name: "address", value: form.address },
       { name: "city", value: form.city },
@@ -115,22 +131,46 @@ export default function CompleteProfile() {
       { name: "highestEducation", value: form.highestEducation },
       { name: "relationToChild", value: form.relationToChild },
       { name: "counterpartnerName", value: form.counterpartnerName },
-      { name: "counterpartnerPhoneNumber", value: form.counterpartnerPhoneNumber },
+      {
+        name: "counterpartnerPhoneNumber",
+        value: form.counterpartnerPhoneNumber,
+      },
       { name: "counterpartnerEducation", value: form.counterpartnerEducation },
-    ]
+    ];
 
     // For each child, check all 4 fields
-    const childFields: { name: string; value: string; childIndex: number }[] = [];
+    const childFields: { name: string; value: string; childIndex: number }[] =
+      [];
     form.children.forEach((child, idx) => {
-      childFields.push({ name: `child_${idx}_name`, value: child.name, childIndex: idx });
-      childFields.push({ name: `child_${idx}_age`, value: child.age, childIndex: idx });
-      childFields.push({ name: `child_${idx}_gender`, value: child.gender, childIndex: idx });
-      childFields.push({ name: `child_${idx}_className`, value: child.className, childIndex: idx });
+      childFields.push({
+        name: `child_${idx}_name`,
+        value: child.name,
+        childIndex: idx,
+      });
+      childFields.push({
+        name: `child_${idx}_age`,
+        value: child.age,
+        childIndex: idx,
+      });
+      childFields.push({
+        name: `child_${idx}_gender`,
+        value: child.gender,
+        childIndex: idx,
+      });
+      childFields.push({
+        name: `child_${idx}_className`,
+        value: child.className,
+        childIndex: idx,
+      });
     });
 
     const missingFields = [
-      ...basicFields.filter((field) => !String(field.value ?? "").trim()).map((field) => field.name),
-      ...childFields.filter((field) => !String(field.value ?? "").trim()).map((field) => field.name),
+      ...basicFields
+        .filter((field) => !String(field.value ?? "").trim())
+        .map((field) => field.name),
+      ...childFields
+        .filter((field) => !String(field.value ?? "").trim())
+        .map((field) => field.name),
     ];
 
     const completed = [
@@ -140,10 +180,11 @@ export default function CompleteProfile() {
     const totalFields = basicFields.length + childFields.length;
 
     return {
-      completion: totalFields > 0 ? Math.round((completed / totalFields) * 100) : 0,
+      completion:
+        totalFields > 0 ? Math.round((completed / totalFields) * 100) : 0,
       missingFields,
     };
-  }
+  };
 
   const getComplementaryRelation = (relation: string): string => {
     const relationMap: { [key: string]: string } = {
@@ -155,81 +196,87 @@ export default function CompleteProfile() {
       aunt: "uncle",
       sibling: "parent",
       other: "family member",
-    }
-    return relationMap[relation] || "family member"
-  }
+    };
+    return relationMap[relation] || "family member";
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index?: number
+  ) => {
+    const { name, value } = e.target;
 
     if (name.startsWith("complementary.")) {
-      const key = name.replace("complementary.", "")
+      const key = name.replace("complementary.", "");
       setForm({
         ...form,
         complementaryRelation: {
           ...form.complementaryRelation,
           [key]: value,
         },
-      })
-      return
+      });
+      return;
     }
 
     if (name.startsWith("child.") && index !== undefined) {
-      const key = name.replace("child.", "") as keyof Child
-      const updatedChildren = [...form.children]
+      const key = name.replace("child.", "") as keyof Child;
+      const updatedChildren = [...form.children];
 
       if (key === "gender") {
-        updatedChildren[index][key] = value as "MALE" | "FEMALE"
+        updatedChildren[index][key] = value as "MALE" | "FEMALE";
       } else {
-        updatedChildren[index][key] = value
+        updatedChildren[index][key] = value;
       }
 
-      setForm({ ...form, children: updatedChildren })
+      setForm({ ...form, children: updatedChildren });
     } else {
-      setForm({ ...form, [name]: value })
+      setForm({ ...form, [name]: value });
     }
-  }
+  };
 
   const handleSelectChange = (name: string, value: string, index?: number) => {
     if (name.startsWith("child.") && index !== undefined) {
-      const key = name.replace("child.", "") as keyof Child
-      const updatedChildren = [...form.children]
+      const key = name.replace("child.", "") as keyof Child;
+      const updatedChildren = [...form.children];
       if (key === "gender") {
-        updatedChildren[index][key] = value as "MALE" | "FEMALE"
+        updatedChildren[index][key] = value as "MALE" | "FEMALE";
       } else {
-        updatedChildren[index][key] = value as string
+        updatedChildren[index][key] = value as string;
       }
-      setForm({ ...form, children: updatedChildren })
+      setForm({ ...form, children: updatedChildren });
     } else {
-      setForm({ ...form, [name]: value })
+      setForm({ ...form, [name]: value });
     }
-  }
+  };
 
   const addChild = () => {
     setForm({
       ...form,
-      children: [...form.children, { name: "", age: "", gender: "MALE", className: "" }],
-    })
-  }
+      children: [
+        ...form.children,
+        { name: "", age: "", gender: "MALE", className: "" },
+      ],
+    });
+  };
 
   const removeChild = (index: number) => {
     setForm({
       ...form,
       children: form.children.filter((_, i) => i !== index),
-    })
-  }
+    });
+  };
 
   const handleSubmit = async () => {
-    setLoading(true)
-    setMessage("")
+    setLoading(true);
+    setMessage("");
 
     try {
       // 🧹 Remove blank children (name & className both required)
       const cleanedChildren = form.children.filter((child) => {
-        const hasName = child.name?.trim() !== ""
-        const hasClass = child.className?.trim() !== ""
-        return hasName && hasClass
-      })
+        const hasName = child.name?.trim() !== "";
+        const hasClass = child.className?.trim() !== "";
+        return hasName && hasClass;
+      });
 
       const formattedForm = {
         ...form,
@@ -237,54 +284,61 @@ export default function CompleteProfile() {
           ...child,
           age: Number(child.age),
         })),
-      }
+      };
 
       const res = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedForm),
-      })
+      });
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Something went wrong")
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-      toast.success("Profile updated successfully")
+      toast.success("Profile updated successfully");
 
       // Update Zustand store
-      useAuthStore.getState().setUser(data.user)
-      console.log(" User updated after submit:", useAuthStore.getState().user)
+      useAuthStore.getState().setUser(data.user);
+      console.log(" User updated after submit:", useAuthStore.getState().user);
 
-      router.replace("/")
+      router.replace("/");
     } catch (err: unknown) {
-      let errorMessage = ""
+      let errorMessage = "";
       if (err instanceof Error) {
-        errorMessage = err.message
+        errorMessage = err.message;
       } else if (typeof err === "string") {
-        errorMessage = err
+        errorMessage = err;
       } else {
-        errorMessage = "Unknown error"
+        errorMessage = "Unknown error";
       }
       toast.error("Profile update failed", {
         description: errorMessage,
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const { completion: progress } = calculateProgress()
+  const { completion: progress } = calculateProgress();
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4">
+          <Link
+            href="/"
+            className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Complete Your Profile</h1>
-          <p className="text-gray-600 mt-2">Help us personalize your learning experience</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Complete Your Profile
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Help us personalize your learning experience
+          </p>
         </div>
 
         {/* Progress Card */}
@@ -296,7 +350,9 @@ export default function CompleteProfile() {
             </div>
             <Progress value={progress} className="h-3" />
             <p className="text-xs text-gray-500 mt-2">
-              {progress < 100 ? `${100 - progress}% remaining to complete your profile` : "Profile completed!"}
+              {progress < 100
+                ? `${100 - progress}% remaining to complete your profile`
+                : "Profile completed!"}
             </p>
           </CardContent>
         </Card>
@@ -355,7 +411,9 @@ export default function CompleteProfile() {
                 <Label htmlFor="highestEducation">Highest Education</Label>
                 <Select
                   value={form.highestEducation}
-                  onValueChange={(value) => handleSelectChange("highestEducation", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("highestEducation", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select your highest education" />
@@ -364,7 +422,9 @@ export default function CompleteProfile() {
                     <SelectItem value="high-school">High School</SelectItem>
                     <SelectItem value="diploma">Diploma</SelectItem>
                     <SelectItem value="associate">Associate Degree</SelectItem>
-                    <SelectItem value="bachelor">{"Bachelor's Degree"}</SelectItem>
+                    <SelectItem value="bachelor">
+                      {"Bachelor's Degree"}
+                    </SelectItem>
                     <SelectItem value="master">{"Master's Degree"}</SelectItem>
                     <SelectItem value="phd">PhD</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
@@ -374,20 +434,22 @@ export default function CompleteProfile() {
             </CardContent>
           </Card>
 
-          
-
           {/* Relationship Information */}
           <Card>
             <CardHeader>
               <CardTitle>Relationship Information</CardTitle>
-              <CardDescription>Your relationship to the child/children</CardDescription>
+              <CardDescription>
+                Your relationship to the child/children
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="relationToChild">Relation to Child</Label>
                 <Select
                   value={form.relationToChild}
-                  onValueChange={(value) => handleSelectChange("relationToChild", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("relationToChild", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select your relation to child" />
@@ -409,8 +471,12 @@ export default function CompleteProfile() {
               {form.relationToChild && (
                 <div className="border rounded-lg p-4 space-y-4 bg-gray-50">
                   <h4 className="font-medium text-gray-900">
-                    {getComplementaryRelation(form.relationToChild).charAt(0).toUpperCase() +
-                      getComplementaryRelation(form.relationToChild).slice(1)}{" "}
+                    {getComplementaryRelation(form.relationToChild)
+                      .charAt(0)
+                      .toUpperCase() +
+                      getComplementaryRelation(form.relationToChild).slice(
+                        1
+                      )}{" "}
                     Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -421,7 +487,9 @@ export default function CompleteProfile() {
                         name="counterpartnerName"
                         value={form.counterpartnerName}
                         onChange={handleChange}
-                        placeholder={`Enter ${getComplementaryRelation(form.relationToChild)}'s name`}
+                        placeholder={`Enter ${getComplementaryRelation(
+                          form.relationToChild
+                        )}'s name`}
                       />
                     </div>
                     <div>
@@ -435,15 +503,25 @@ export default function CompleteProfile() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="counterpartnerPhoneNumber">Phone Number</Label>
+                      <Label htmlFor="counterpartnerPhoneNumber">
+                        Phone Number
+                      </Label>
+
+                 <div className="flex" >
+
+                      <div className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md border border-gray-300 select-none">
+                        +91
+                      </div>
                       <Input
                         id="counterpartnerPhoneNumber"
                         name="counterpartnerPhoneNumber"
-                        type="tel"
+                        type="phone"
+                        maxLength={10}
                         value={form.counterpartnerPhoneNumber}
                         onChange={handleChange}
                         placeholder="Enter phone number"
                       />
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -476,7 +554,9 @@ export default function CompleteProfile() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor={`child-name-${index}`}>{"Child's Name"}</Label>
+                      <Label htmlFor={`child-name-${index}`}>
+                        {"Child's Name"}
+                      </Label>
                       <Input
                         id={`child-name-${index}`}
                         name="child.name"
@@ -500,7 +580,9 @@ export default function CompleteProfile() {
                       <Label htmlFor={`child-gender-${index}`}>Gender</Label>
                       <Select
                         value={child.gender}
-                        onValueChange={(value) => handleSelectChange("child.gender", value, index)}
+                        onValueChange={(value) =>
+                          handleSelectChange("child.gender", value, index)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select gender" />
@@ -525,7 +607,12 @@ export default function CompleteProfile() {
                 </div>
               ))}
 
-              <Button type="button" variant="outline" onClick={addChild} className="w-full">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addChild}
+                className="w-full"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Child
               </Button>
@@ -539,18 +626,28 @@ export default function CompleteProfile() {
                 Save for Later
               </Button>
             </Link>
-            <Button onClick={handleSubmit} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               {loading ? "Updating..." : "Complete Profile"}
             </Button>
           </div>
 
           {message && (
             <div className="text-center">
-              <p className={`text-sm ${message.includes("✅") ? "text-green-600" : "text-red-600"}`}>{message}</p>
+              <p
+                className={`text-sm ${
+                  message.includes("✅") ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {message}
+              </p>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
