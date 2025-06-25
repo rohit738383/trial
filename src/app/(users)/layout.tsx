@@ -4,8 +4,8 @@ import Footer from "@/app/(users)/components/Footer";
 import ScrollingBanner from "./components/Scrolling-banner";
 
 export const metadata: Metadata = {
-  title: "Seminar CMS",
-  description: "Seminar CMS",
+  title: "Studytainment",
+  description: "Studytainment",
 };
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {

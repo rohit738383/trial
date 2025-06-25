@@ -5,7 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/app/(admin-panel)/components/app-sidebar";
 
 export const metadata: Metadata = {
-  title: "Seminar CMS - Admin Dashboard",
+  title: "Admin Dashboard",
   description: "Admin panel for managing seminars and bookings",
 };
 
