@@ -11,7 +11,7 @@ function SilentRefreshContent() {
   const from = searchParams.get('from') || '/';
 
   const refreshLock = useRef(false);
-
+  
   useEffect(() => {
     async function refreshTokens() {
       if (refreshLock.current) {
