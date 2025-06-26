@@ -28,8 +28,6 @@ export const generateSeminarTicketsPDF = (seminar: Seminar) => {
   }
 
   // Colors matching the website
-  const primaryBlue = [59, 130, 246] // blue-600
-  const primaryPurple = [147, 51, 234] // purple-600
   const grayText = [75, 85, 99] // gray-600
   const darkText = [17, 24, 39] // gray-900
   const lightGray = [249, 250, 251] // gray-50
