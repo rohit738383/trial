@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { Loader2 } from "lucide-react";
 
-export default function SilentRefreshPage() {
+function SilentRefreshContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from') || '/';
@@ -54,8 +54,17 @@ export default function SilentRefreshPage() {
     refreshTokens();
   }, [from, router]);
 
-  return <div className="flex items-center justify-center min-h-screen">
-  <Loader2 className="h-10 w-10 text-primary animate-spin" />
-</div>
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Loader2 className="h-10 w-10 text-primary animate-spin" />
+    </div>
+  );
+}
 
+export default function SilentRefreshPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-10 w-10 text-primary animate-spin" /></div>}>
+      <SilentRefreshContent />
+    </Suspense>
+  );
 }
