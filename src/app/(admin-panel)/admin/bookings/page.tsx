@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -11,158 +13,50 @@ import { Search, Filter, CreditCard, Clock, CheckCircle } from "lucide-react"
 // import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
 // import { ExportService } from "@/lib/export-utils"
 import { Button } from "@/components/ui/button"
-
-// Mock data
-const bookings = [
-  {
-    id: 1,
-    bookingId: "BK001",
-    userName: "John Doe",
-    userEmail: "john@example.com",
-    seminarTitle: "Advanced React Patterns",
-    seminarDate: "2024-02-15",
-    bookingDate: "2024-01-20",
-    amount: 100,
-    status: "paid",
-    paymentMethod: "Credit Card",
-    ticketNumber: "TKT-2024-001",
-  },
-  {
-    id: 2,
-    bookingId: "BK002",
-    userName: "Jane Smith",
-    userEmail: "jane@example.com",
-    seminarTitle: "Node.js Masterclass",
-    seminarDate: "2024-02-20",
-    bookingDate: "2024-01-22",
-    amount: 120,
-    status: "pending",
-    paymentMethod: "PayPal",
-    ticketNumber: null,
-  },
-  // Add more bookings with ticket numbers for paid status
-  {
-    id: 3,
-    bookingId: "BK003",
-    userName: "Mike Johnson",
-    userEmail: "mike@example.com",
-    seminarTitle: "Database Design Fundamentals",
-    seminarDate: "2024-02-25",
-    bookingDate: "2024-01-25",
-    amount: 80,
-    status: "paid",
-    paymentMethod: "Bank Transfer",
-    ticketNumber: "TKT-2024-002",
-  },
-  {
-    id: 4,
-    bookingId: "BK004",
-    userName: "Sarah Wilson",
-    userEmail: "sarah@example.com",
-    seminarTitle: "UI/UX Design Principles",
-    seminarDate: "2024-03-01",
-    bookingDate: "2024-01-28",
-    amount: 90,
-    status: "paid",
-    paymentMethod: "Credit Card",
-    ticketNumber: "TKT-2024-003",
-  },
-  {
-    id: 5,
-    bookingId: "BK005",
-    userName: "David Brown",
-    userEmail: "david@example.com",
-    seminarTitle: "Advanced React Patterns",
-    seminarDate: "2024-02-15",
-    bookingDate: "2024-01-30",
-    amount: 100,
-    status: "pending",
-    paymentMethod: "PayPal",
-    ticketNumber: null,
-  },
-  {
-    id: 6,
-    bookingId: "BK006",
-    userName: "Lisa Garcia",
-    userEmail: "lisa@example.com",
-    seminarTitle: "Node.js Masterclass",
-    seminarDate: "2024-02-20",
-    bookingDate: "2024-02-01",
-    amount: 120,
-    status: "cancelled",
-    paymentMethod: "Credit Card",
-    ticketNumber: null,
-  },
-  // Add more bookings for pagination
-  {
-    id: 7,
-    bookingId: "BK007",
-    userName: "Alex Johnson",
-    userEmail: "alex@example.com",
-    seminarTitle: "Python Basics",
-    seminarDate: "2024-03-05",
-    bookingDate: "2024-02-05",
-    amount: 75,
-    status: "paid",
-    paymentMethod: "Credit Card",
-    ticketNumber: "TKT-2024-004",
-  },
-  {
-    id: 8,
-    bookingId: "BK008",
-    userName: "Emma Davis",
-    userEmail: "emma@example.com",
-    seminarTitle: "JavaScript Advanced",
-    seminarDate: "2024-03-10",
-    bookingDate: "2024-02-08",
-    amount: 110,
-    status: "paid",
-    paymentMethod: "PayPal",
-    ticketNumber: "TKT-2024-005",
-  },
-  {
-    id: 9,
-    bookingId: "BK009",
-    userName: "Robert Wilson",
-    userEmail: "robert@example.com",
-    seminarTitle: "CSS Mastery",
-    seminarDate: "2024-03-15",
-    bookingDate: "2024-02-10",
-    amount: 85,
-    status: "pending",
-    paymentMethod: "Bank Transfer",
-    ticketNumber: null,
-  },
-  {
-    id: 10,
-    bookingId: "BK010",
-    userName: "Sophie Brown",
-    userEmail: "sophie@example.com",
-    seminarTitle: "React Native",
-    seminarDate: "2024-03-20",
-    bookingDate: "2024-02-12",
-    amount: 130,
-    status: "paid",
-    paymentMethod: "Credit Card",
-    ticketNumber: "TKT-2024-006",
-  },
-]
+import axiosInstance from "@/lib/axiosInstance"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [loading, setLoading] = useState(true)
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  const filteredBookings = bookings.filter((booking) => {
-    const matchesSearch =
-      booking.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.seminarTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.bookingId.toLowerCase().includes(searchTerm.toLowerCase())
+  const [showTicketsModal, setShowTicketsModal] = useState(false)
+  const [selectedTickets, setSelectedTickets] = useState<{ ticketCode: string }[]>([])
 
-    const matchesStatus = statusFilter === "all" || booking.status === statusFilter
+  useEffect(() => {
+    const fetchBookings = async () => {
+      setLoading(true)
+      try {
+        const res = await axiosInstance.get("/api/booking")
+        if (res.data.success) {
+          setBookings(res.data.bookings)
+        }
+      } catch (err) {
+        // handle error
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchBookings()
+  }, [])
+
+  const filteredBookings = bookings.filter((booking) => {
+    const searchLower = searchTerm.toLowerCase().trim()
+    const matchesSearch =
+      searchTerm === "" ||
+      booking.user?.fullName?.toLowerCase().includes(searchLower) ||
+      booking.user?.phoneNumber?.toLowerCase().includes(searchLower) ||
+      booking.user?.email?.toLowerCase().includes(searchLower) ||
+      booking.seminar?.title?.toLowerCase().includes(searchLower) ||
+      booking.id.toLowerCase().includes(searchLower) ||
+      booking.status?.toLowerCase().includes(searchLower)
+
+    const matchesStatus = statusFilter === "all" || booking.status?.toLowerCase() === statusFilter.toLowerCase()
 
     return matchesSearch && matchesStatus
   })
@@ -174,27 +68,29 @@ export default function BookingsPage() {
 
   const stats = {
     total: bookings.length,
-    paid: bookings.filter((b) => b.status === "paid").length,
-    pending: bookings.filter((b) => b.status === "pending").length,
-    cancelled: bookings.filter((b) => b.status === "cancelled").length,
-    totalRevenue: bookings.filter((b) => b.status === "paid").reduce((sum, b) => sum + b.amount, 0),
-    pendingRevenue: bookings.filter((b) => b.status === "pending").reduce((sum, b) => sum + b.amount, 0),
+    paid: bookings.filter((b) => b.status?.toLowerCase() === "paid").length,
+    pending: bookings.filter((b) => b.status?.toLowerCase() === "pending").length,
+    cancelled: bookings.filter((b) => b.status?.toLowerCase() === "cancelled").length,
   }
 
   const getStatusIcon = (status: string): React.ReactElement | null => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "paid":
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-green-600" />
       case "pending":
-        return <Clock className="h-4 w-4 text-yellow-600" />;
+        return <Clock className="h-4 w-4 text-yellow-600" />
       case "cancelled":
-        return <CreditCard className="h-4 w-4 text-red-600" />;
+        return <CreditCard className="h-4 w-4 text-red-600" />
       default:
-        return null;
+        return null
     }
   }
 
- 
+  const handleShowAllTickets = (tickets: { ticketCode: string }[]) => {
+    setSelectedTickets(tickets)
+    setShowTicketsModal(true)
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex items-center gap-4">
@@ -206,7 +102,7 @@ export default function BookingsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
@@ -246,26 +142,6 @@ export default function BookingsPage() {
             <div className="text-2xl font-bold text-red-600">{stats.cancelled}</div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalRevenue}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Revenue</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.pendingRevenue}</div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Filters */}
@@ -274,10 +150,10 @@ export default function BookingsPage() {
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search bookings..."
+              placeholder="Search by name, phone, seminar, booking ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-[300px]"
+              className="w-[350px]"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -319,39 +195,81 @@ export default function BookingsPage() {
                 <TableHead>Amount</TableHead>
                 <TableHead>Payment Method</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Ticket Number</TableHead>
+                <TableHead>Tickets</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedBookings.map((booking) => (
                 <TableRow key={booking.id}>
-                  <TableCell className="font-medium">{booking.bookingId}</TableCell>
+                  <TableCell className="font-medium">{booking.id}</TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{booking.userName}</div>
-                      <div className="text-sm text-muted-foreground">{booking.userEmail}</div>
+                      <div className="font-medium">{booking.user?.fullName}</div>
+                      <div className="text-sm text-muted-foreground">{booking.user?.phoneNumber}</div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium">{booking.seminarTitle}</div>
+                    <div className="font-medium">{booking.seminar?.title}</div>
                   </TableCell>
-                  <TableCell>{booking.seminarDate}</TableCell>
-                  <TableCell>{booking.bookingDate}</TableCell>
-                  <TableCell className="font-medium">${booking.amount}</TableCell>
-                  <TableCell>{booking.paymentMethod}</TableCell>
+                  <TableCell>
+                    {booking.seminar?.date ? new Date(booking.seminar.date).toLocaleDateString() : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : "-"}
+                  </TableCell>
+                  <TableCell className="font-medium">₹{booking.amount}</TableCell>
+                  <TableCell>{booking.paymentMethod || "-"}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(booking.status)}
-                      {/* <Badge variant={getStatusVariant(booking.status)}>{booking.status}</Badge> */}
+                      <Badge
+                        variant={
+                          booking.status?.toLowerCase() === "paid"
+                            ? "default"
+                            : booking.status?.toLowerCase() === "pending"
+                              ? "secondary"
+                              : booking.status?.toLowerCase() === "cancelled"
+                                ? "destructive"
+                                : "outline"
+                        }
+                      >
+                        {booking.status}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell>
-                    {booking.ticketNumber ? (
-                      <Badge variant="outline" className="font-mono">
-                        {booking.ticketNumber}
-                      </Badge>
+                    {booking.tickets && booking.tickets.length > 0 ? (
+                      <div className="space-y-1">
+                        {booking.tickets.length <= 3 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {booking.tickets.map((t: { ticketCode: string }, index: number) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {t.ticketCode}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap gap-1">
+                              {booking.tickets.slice(0, 2).map((t: { ticketCode: string }, index: number) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {t.ticketCode}
+                                </Badge>
+                              ))}
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-xs"
+                              onClick={() => handleShowAllTickets(booking.tickets)}
+                            >
+                              +{booking.tickets.length - 2} more tickets
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     ) : (
-                      <span className="text-muted-foreground">-</span>
+                      <span className="text-muted-foreground">No tickets</span>
                     )}
                   </TableCell>
                 </TableRow>
@@ -360,6 +278,8 @@ export default function BookingsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Pagination */}
       <div className="flex items-center justify-between px-2 py-4">
         <div className="text-sm text-muted-foreground">
           Showing {startIndex + 1} to {Math.min(endIndex, filteredBookings.length)} of {filteredBookings.length} results
@@ -374,17 +294,30 @@ export default function BookingsPage() {
             Previous
           </Button>
           <div className="flex items-center space-x-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentPage(page)}
-                className="w-8 h-8 p-0"
-              >
-                {page}
-              </Button>
-            ))}
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              let pageNum
+              if (totalPages <= 5) {
+                pageNum = i + 1
+              } else if (currentPage <= 3) {
+                pageNum = i + 1
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i
+              } else {
+                pageNum = currentPage - 2 + i
+              }
+
+              return (
+                <Button
+                  key={pageNum}
+                  variant={currentPage === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(pageNum)}
+                  className="w-8 h-8 p-0"
+                >
+                  {pageNum}
+                </Button>
+              )
+            })}
           </div>
           <Button
             variant="outline"
@@ -396,6 +329,40 @@ export default function BookingsPage() {
           </Button>
         </div>
       </div>
+      {/* Tickets Modal */}
+      <Dialog open={showTicketsModal} onOpenChange={setShowTicketsModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>All Tickets</DialogTitle>
+            <DialogDescription>Complete list of ticket codes for this booking</DialogDescription>
+          </DialogHeader>
+          <div className="max-h-96 overflow-y-auto">
+            <div className="grid gap-2">
+              {selectedTickets.map((ticket, index) => (
+                <div key={index} className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">
+                  <span className="font-mono text-sm">{ticket.ticketCode}</span>
+                  <Badge variant="outline" className="text-xs">
+                    #{index + 1}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-between items-center pt-4 border-t">
+            <span className="text-sm text-muted-foreground">Total: {selectedTickets.length} tickets</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const ticketCodes = selectedTickets.map((t) => t.ticketCode).join("\n")
+                navigator.clipboard.writeText(ticketCodes)
+              }}
+            >
+              Copy All
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

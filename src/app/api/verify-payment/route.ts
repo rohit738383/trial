@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import { razorpay } from "@/lib/razorpay";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,6 +46,14 @@ if (!existingBooking) {
   throw new Error("Booking not found");
 }
 
+    // Fetch payment details from Razorpay to get payment method
+    let paymentMethod = null;
+    try {
+      const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
+      paymentMethod = paymentDetails.method || null;
+    } catch (err) {
+      console.error("Failed to fetch payment details from Razorpay", err);
+    }
 
     const booking = await prisma.booking.update({
         where : {id : bookingId},
@@ -52,6 +61,7 @@ if (!existingBooking) {
             status : "PAID",
             razorpayPaymentId : razorpay_payment_id,
             razorpayOrderId: razorpay_order_id,
+            paymentMethod: paymentMethod, // Store payment method
             tickets: {
               create: Array.from({ length: existingBooking.quantity }, () => ({
                 ticketCode: `TICKET-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,

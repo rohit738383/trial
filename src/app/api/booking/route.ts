@@ -134,3 +134,66 @@ return NextResponse.json({
    }
 }
 
+export async function GET(req: NextRequest) {
+  try {
+    // 1. Check accessToken and admin role
+    const token = req.cookies.get("accessToken")?.value;
+    if (!token) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+    const user = await (await import("@/lib/auth")).verifyJWT(token);
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
+    }
+
+    // 2. Fetch bookings with required fields
+    const bookings = await prisma.booking.findMany({
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            phoneNumber: true,
+            username: true,
+          },
+        },
+        seminar: {
+          select: {
+            id: true,
+            title: true,
+            date: true,
+          },
+        },
+        tickets: {
+          select: {
+            ticketCode: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // 3. Map bookings to required response format
+    const formatted = bookings.map(b => ({
+      id: b.id,
+      user: b.user,
+      seminar: {
+        id: b.seminar.id,
+        title: b.seminar.title,
+        date: b.seminar.date.toISOString(), // ISO string
+      },
+      bookingDate: b.createdAt.toISOString(), // ISO string
+      amount: b.totalPrice.toString(), // as string for consistency
+      paymentMethod: b.paymentMethod,
+      status: b.status,
+      tickets: b.tickets,
+    }));
+
+    return NextResponse.json({ success: true, bookings: formatted });
+  } catch (error) {
+    console.error("Admin GET bookings error", error);
+    return NextResponse.json({ success: false, message: "Failed to fetch bookings" }, { status: 500 });
+  }
+}
+

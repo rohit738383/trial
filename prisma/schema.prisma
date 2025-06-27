@@ -96,6 +96,7 @@ model Booking {
   razorpayPaymentId String?
   status            BookingStatus @default(PENDING)
   totalPrice        Decimal
+  paymentMethod     String?
   seminar           Seminar       @relation(fields: [seminarId], references: [id])
   user              User          @relation(fields: [userId], references: [id])
   tickets           Ticket[]

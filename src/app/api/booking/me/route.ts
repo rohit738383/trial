@@ -29,7 +29,8 @@ export async function GET(req : NextRequest) {
               userId: parseInt(user.id),
               status : "PAID",
             },
-            include: {
+            select: {
+              id: true,
               seminar: {
                 select: {
                   id: true,
@@ -44,6 +45,10 @@ export async function GET(req : NextRequest) {
                   ticketCode: true,
                 },
               },
+              paymentMethod: true,
+              createdAt: true,
+              quantity: true,
+              totalPrice: true,
             },
             orderBy: {
               createdAt: "desc",
