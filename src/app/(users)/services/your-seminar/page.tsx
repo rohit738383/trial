@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { generateSeminarTicketsPDF } from "@/utilis/ticket-pdf-generator"
 import { useEffect, useState } from "react"
 import axiosInstance from "@/lib/axiosInstance"
+import Link from "next/link"
 
 interface Ticket {
   ticketCode: string
@@ -165,10 +166,12 @@ export default function Component() {
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               {"You haven't enrolled in any seminars yet. Explore our amazing collection of knowledge-packed sessions!"}
             </p>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
-              <Sparkles className="w-5 h-5 mr-2" />
-              Explore Seminars
-            </Button>
+            <Link href="/seminars">
+  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
+    <Sparkles className="w-5 h-5 mr-2" />
+    Explore Seminars
+  </Button>
+</Link>
           </div>
         </div>
       </div>
