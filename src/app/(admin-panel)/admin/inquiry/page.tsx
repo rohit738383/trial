@@ -59,7 +59,7 @@ export default function InquiriesPage() {
   useEffect(()=>{
     const fetchinquiries = async () =>{
      try {
-       const res = await axiosInstance.get("/inquiry")
+       const res = await axiosInstance.get("/api/inquiry")
        const inquiries = Array.isArray(res.data) ? res.data : []
        setInquiries(inquiries);
      } catch (error) {
@@ -134,7 +134,7 @@ export default function InquiriesPage() {
     if (!selectedInquiry || !tempStatus) return;
     
     try {
-      await axiosInstance.put(`/inquiry/${selectedInquiry.id}`, {
+      await axiosInstance.put(`/api/inquiry/${selectedInquiry.id}`, {
         status: tempStatus
       });
       
