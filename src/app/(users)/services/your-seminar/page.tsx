@@ -163,7 +163,7 @@ export default function Component() {
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Start Learning?</h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              You haven't enrolled in any seminars yet. Explore our amazing collection of knowledge-packed sessions!
+              {"You haven't enrolled in any seminars yet. Explore our amazing collection of knowledge-packed sessions!"}
             </p>
             <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
               <Sparkles className="w-5 h-5 mr-2" />
