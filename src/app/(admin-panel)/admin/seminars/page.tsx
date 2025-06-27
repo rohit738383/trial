@@ -117,13 +117,14 @@ export default function SeminarsPage() {
         );
         toast.success("Seminar updated");
         setEditingSeminar(null);
+        setIsAddDialogOpen(false);
       } else {
         const res = await axiosInstance.post("/api/seminars", payload);
         setSeminars([...seminars, res.data]);
         toast.success("Seminar created");
+        setFormData(defaultFormData);
+        setIsAddDialogOpen(false);
       }
-      setFormData(defaultFormData);
-      setIsAddDialogOpen(false);
     } catch (error: unknown) {
       const axiosError = error as AxiosError<{ errors?: string }>;
       toast.error("Request failed", {

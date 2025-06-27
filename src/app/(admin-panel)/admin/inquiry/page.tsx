@@ -53,6 +53,7 @@ export default function InquiriesPage() {
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [tempStatus, setTempStatus] = useState<InquiryStatus | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const itemsPerPage = 5
 
 
@@ -148,6 +149,9 @@ export default function InquiriesPage() {
       setSelectedInquiry({ ...selectedInquiry, status: tempStatus });
       setIsEditing(false);
       setTempStatus(null);
+      
+      // Close the dialog after successful update
+      setIsDialogOpen(false);
     } catch (error) {
       console.error("Error updating status:", error);
     }
@@ -307,9 +311,12 @@ export default function InquiriesPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Dialog>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" onClick={() => setSelectedInquiry(inquiry)}>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          setSelectedInquiry(inquiry);
+                          setIsDialogOpen(true);
+                        }}>
                           View Details
                         </Button>
                       </DialogTrigger>
