@@ -417,6 +417,7 @@ export default function SeminarPage() {
       });
       const data = await response.data;
       if (data.success) {
+        setBookingModal(false);
         await openRazorpayCheckout({
           bookingId: data.bookingId,
           orderId: data.orderId,
