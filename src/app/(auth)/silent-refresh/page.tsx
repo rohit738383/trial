@@ -43,10 +43,14 @@ function SilentRefreshContent() {
 
         if (res.status === 200) {
           console.log('[RefreshToken] Token refresh successful, redirecting...');
+          refreshLock.current = false;
           router.replace(from);
+          return;
         } else {
           console.warn('[RefreshToken] Token refresh returned unexpected status:', res.status);
+          refreshLock.current = false;
           router.replace('/sign-in');
+          return;
         }
       } catch (error: unknown) {
         if (isAxiosError(error)) {
@@ -54,6 +58,7 @@ function SilentRefreshContent() {
           
           if (error.response?.status === 401 || error.response?.status === 403) {
             console.log('[RefreshToken] Refresh token invalid/expired, redirecting to sign-in');
+            refreshLock.current = false;
             router.replace('/sign-in');
             return;
           }
@@ -70,16 +75,17 @@ function SilentRefreshContent() {
             refreshTokens();
           }, 1000 * retryCount.current);
         } else {
-          router.replace('/sign-in');
-        }
-      } finally {
-        if (retryCount.current >= maxRetries) {
           refreshLock.current = false;
+          router.replace('/sign-in');
         }
       }
     }
 
     refreshTokens();
+
+    return () => {
+      refreshLock.current = false;
+    };
   }, [from, router]);
 
   return (
