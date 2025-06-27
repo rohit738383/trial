@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 import * as z from "zod"
 import { inquirySchema } from "@/schemas/inquirySchema"
 
@@ -59,7 +59,7 @@ export default function InquiriesPage() {
   useEffect(()=>{
     const fetchinquiries = async () =>{
      try {
-       const res = await axios.get("/api/inquiry")
+       const res = await axiosInstance.get("/inquiry")
        const inquiries = Array.isArray(res.data) ? res.data : []
        setInquiries(inquiries);
      } catch (error) {
@@ -134,7 +134,7 @@ export default function InquiriesPage() {
     if (!selectedInquiry || !tempStatus) return;
     
     try {
-      await axios.put(`/api/inquiry/${selectedInquiry.id}`, {
+      await axiosInstance.put(`/inquiry/${selectedInquiry.id}`, {
         status: tempStatus
       });
       
