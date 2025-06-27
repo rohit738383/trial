@@ -353,7 +353,6 @@ export default function SeminarPage() {
   const [bookingModal, setBookingModal] = useState(false);
   const [selectedSeminar, setSelectedSeminar] = useState<Seminar | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [error, setError] = useState<string | null>(null);
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const user = useAuthStore((state) => state.user);
@@ -366,7 +365,7 @@ export default function SeminarPage() {
         setSeminars(res.data);
       } catch (error) {
         console.error("Error fetching seminars:", error);
-        setError("Failed to load seminars");
+        toast.error("Failed to load seminars");
       } finally {
         setLoading(false);
       }
@@ -901,10 +900,20 @@ export default function SeminarPage() {
               </Button>
               <Button
                 onClick={handleConfirmBooking}
+                disabled={bookingLoading}
                 className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Confirm Booking
+                {bookingLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Confirm Booking
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
