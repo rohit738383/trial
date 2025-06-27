@@ -16,11 +16,29 @@ import { Button } from "@/components/ui/button"
 import axiosInstance from "@/lib/axiosInstance"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
+// Define Booking type
+interface Booking {
+  id: string;
+  user?: {
+    fullName?: string;
+    phoneNumber?: string;
+    email?: string;
+  };
+  seminar?: {
+    title?: string;
+    date?: string;
+  };
+  bookingDate?: string;
+  amount?: number;
+  paymentMethod?: string;
+  status?: string;
+  tickets?: { ticketCode: string }[];
+}
+
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<any[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [loading, setLoading] = useState(true)
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -30,16 +48,13 @@ export default function BookingsPage() {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      setLoading(true)
       try {
         const res = await axiosInstance.get("/api/booking")
         if (res.data.success) {
           setBookings(res.data.bookings)
         }
-      } catch (err) {
+      } catch {
         // handle error
-      } finally {
-        setLoading(false)
       }
     }
     fetchBookings()
@@ -221,7 +236,7 @@ export default function BookingsPage() {
                   <TableCell>{booking.paymentMethod || "-"}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {getStatusIcon(booking.status)}
+                      {getStatusIcon(booking.status ?? "")}
                       <Badge
                         variant={
                           booking.status?.toLowerCase() === "paid"
@@ -261,7 +276,7 @@ export default function BookingsPage() {
                               variant="ghost"
                               size="sm"
                               className="h-6 px-2 text-xs"
-                              onClick={() => handleShowAllTickets(booking.tickets)}
+                              onClick={() => handleShowAllTickets(booking.tickets ?? [])}
                             >
                               +{booking.tickets.length - 2} more tickets
                             </Button>
