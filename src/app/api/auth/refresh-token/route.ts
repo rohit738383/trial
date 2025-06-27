@@ -11,11 +11,11 @@ export async function POST(req: Request) {
   console.log('[RefreshToken] Cookie header:', cookieHeader);
   const cookies = parse(cookieHeader);
   const refreshToken = cookies.refreshToken;
-  console.log('[RefreshToken] Extracted refreshToken:', refreshToken);
+  console.log('[RefreshToken] Extracted refreshToken:', refreshToken ? 'exists' : 'missing');
 
   if (!refreshToken) {
     console.log('[RefreshToken] No refresh token found in cookies');
-    return NextResponse.json({ success: false, message: 'No refresh token' }, { status: 404 });
+    return NextResponse.json({ success: false, message: 'No refresh token' }, { status: 401 });
   }
 
   try {
@@ -114,6 +114,6 @@ export async function POST(req: Request) {
     return response;
   } catch (err) {
     console.error('[RefreshToken] Error during token verification:', err);
-    return NextResponse.json({ success: false, message: 'Invalid refresh token' }, { status: 404 });
+    return NextResponse.json({ success: false, message: 'Invalid refresh token' }, { status: 401 });
   }
 }

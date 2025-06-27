@@ -4,6 +4,11 @@ import { verifyJWT } from '@/lib/auth';
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value;
 
+  // Don't apply middleware to silent-refresh page to prevent infinite loops
+  if (request.nextUrl.pathname === '/silent-refresh') {
+    return NextResponse.next();
+  }
+
   if (!token) {
     const refreshUrl = new URL('/silent-refresh', request.url);
     refreshUrl.searchParams.set('from', request.nextUrl.pathname);

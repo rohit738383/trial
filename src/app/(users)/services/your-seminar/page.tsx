@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { generateSeminarTicketsPDF } from "@/utilis/ticket-pdf-generator"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axiosInstance from "@/lib/axiosInstance"
 
 interface Ticket {
   ticketCode: string
@@ -38,7 +38,7 @@ export default function Component() {
   const fetchBookings = async () => {
     try {
       setLoading(true)
-      const response = await axios.get("/api/booking/me", {
+      const response = await axiosInstance.get("/api/booking/me", {
         method: "GET",
         withCredentials: true,
       })

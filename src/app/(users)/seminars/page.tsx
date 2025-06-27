@@ -49,7 +49,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
+import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { openRazorpayCheckout } from "@/lib/razorpay_modal";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -352,6 +353,8 @@ export default function SeminarPage() {
   const [bookingModal, setBookingModal] = useState(false);
   const [selectedSeminar, setSelectedSeminar] = useState<Seminar | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   const user = useAuthStore((state) => state.user);
 
@@ -359,22 +362,11 @@ export default function SeminarPage() {
     const fetchSeminars = async () => {
       try {
         setLoading(true);
-
-        const res = await axios.get("/api/seminars");
-
-        // Normalize data structure
-        const rawSeminars = Array.isArray(res.data)
-          ? res.data
-          : res.data?.seminars ?? res.data?.data ?? [];
-
-        // ✅ Zod validation
-        const parsedSeminars = seminarSchema.array().parse(rawSeminars);
-
-        setSeminars(parsedSeminars);
-      } catch (err: unknown) {
-        console.error("Error fetching seminars:", err);
-      
-        toast.error("Failed to load seminars");
+        const res = await axiosInstance.get("/api/seminars");
+        setSeminars(res.data);
+      } catch (error) {
+        console.error("Error fetching seminars:", error);
+        setError("Failed to load seminars");
       } finally {
         setLoading(false);
       }
@@ -411,14 +403,17 @@ export default function SeminarPage() {
   };
 
   const handleConfirmBooking = async () => {
-    try {
-      if (!user) {
-        toast.error("Please login to book a seminar");
-        return;
-      }
+    if (!selectedSeminar) return;
+    
+    if (!user) {
+      toast.error("Please login to book a seminar");
+      return;
+    }
 
-      const response = await axios.post("/api/booking", {
-        seminarId: selectedSeminar?.id,
+    try {
+      setBookingLoading(true);
+      const response = await axiosInstance.post("/api/booking", {
+        seminarId: selectedSeminar.id,
         quantity: quantity,
       });
       const data = await response.data;
@@ -436,22 +431,17 @@ export default function SeminarPage() {
       } else {
         alert(data.error);
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error("Booking error:", error);
       let errorMsg = "Failed to book seminar";
-      if (axios.isAxiosError && axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         errorMsg = error.response?.data?.message || error.message || errorMsg;
       } else if (typeof error === "string") {
         errorMsg = error;
-      } else if (
-        error &&
-        typeof error === "object" &&
-        "message" in error &&
-        typeof (error as { message?: unknown }).message === "string"
-      ) {
-        errorMsg = (error as { message: string }).message;
       }
       toast.error(errorMsg);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
