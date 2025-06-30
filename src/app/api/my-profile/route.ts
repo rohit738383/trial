@@ -52,8 +52,6 @@ export async function GET(request : NextRequest){
 
 }
 
-
-
 export async function PUT(request: NextRequest) {
   try {
     const token = request.cookies.get("refreshToken")?.value;

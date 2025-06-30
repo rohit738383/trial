@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import axios from "axios"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,8 +49,7 @@ export const Navigation = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/sign-out", {
-        method: "POST",
+      await axios.post("/api/sign-out", {
         credentials: "include",
       })
       clearUser()

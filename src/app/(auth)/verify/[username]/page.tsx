@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
-import axiosInstance from "@/lib/axiosInstance"
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -41,7 +41,7 @@ const VerifyOtp = () =>{
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
    
     try {
-            const response = await axiosInstance.post("/api/auth/verify-otp", {
+            const response = await axios.post("/api/auth/verify-otp", {
                       username: params.username,
                       verifyCode: data.code
                   },
@@ -67,7 +67,7 @@ const VerifyOtp = () =>{
 
       const handleResendOtp = async () => {
       try {
-        const response = await axiosInstance.post("/api/auth/resend-otp", {
+        const response = await axios.post("/api/auth/resend-otp", {
           username: params.username,
         });
     

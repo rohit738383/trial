@@ -1,6 +1,6 @@
 'use client';
 
-import axiosInstance from '@/lib/axiosInstance';
+import axios from 'axios';
 import { isAxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, Suspense } from 'react';
@@ -35,7 +35,7 @@ function SilentRefreshContent() {
       try {
         console.log('[RefreshToken] document.cookie:', document.cookie);
 
-        const res = await axiosInstance.post('/api/auth/refresh-token', null, {
+        const res = await axios.post('/api/auth/refresh-token', null, {
           withCredentials: true,
         });
 

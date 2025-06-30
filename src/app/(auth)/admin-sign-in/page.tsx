@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type * as z from "zod"
 import { toast } from "sonner"
-import axiosInstance from "@/lib/axiosInstance"
 import { useRouter } from "next/navigation"
 import { adminLoginSchema } from "@/schemas/adminLoginSchema"
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -27,7 +26,7 @@ const AdminSignInPage = () => {
 
   const onSubmit = async (data: z.infer<typeof adminLoginSchema>) => {
     try {
-      const response = await axiosInstance.post("/api/admin-signin", data, {
+      const response = await axios.post("/api/admin-signin", data, {
         withCredentials: true,
       })
 

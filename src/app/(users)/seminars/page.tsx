@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 import axiosInstance from "@/lib/axiosInstance";
 import { isAxiosError } from "axios";
 import { toast } from "sonner";
@@ -361,7 +362,7 @@ export default function SeminarPage() {
     const fetchSeminars = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("/api/seminars");
+        const res = await axios.get("/api/seminars");
         setSeminars(res.data);
       } catch (error) {
         console.error("Error fetching seminars:", error);

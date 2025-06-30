@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Add type for failed queue items
+
 type FailedQueueItem = {
   resolve: (token?: string) => void;
   reject: (error: unknown) => void;
@@ -61,7 +61,7 @@ axiosInstance.interceptors.response.use(
           })
           .catch(error => {
             processQueue(error);
-            // Only redirect if we're not already on silent-refresh page
+       
             if (window.location.pathname !== '/silent-refresh') {
               const path = window.location.pathname + window.location.search;
               window.location.href = `/silent-refresh?from=${encodeURIComponent(path)}`;

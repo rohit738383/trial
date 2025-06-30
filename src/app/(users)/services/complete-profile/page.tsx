@@ -25,6 +25,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
+import axiosInstance from "@/lib/axiosInstance";
 
 type Child = {
   name: string;
@@ -66,14 +67,14 @@ export default function CompleteProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("/api/profile", {
+        const res = await axiosInstance.get("/api/profile", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
 
-        if (!res.ok) throw new Error("Failed to fetch profile");
+        if (res.status !== 200) throw new Error("Failed to fetch profile");
 
-        const data = await res.json();
+        const data = await res.data;
         if (data.profile) {
           const { children = [], ...rest } = data.profile;
           setForm({

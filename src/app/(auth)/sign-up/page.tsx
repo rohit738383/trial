@@ -8,7 +8,6 @@ import { useEffect, useState } from "react"
 import { useDebounceCallback } from "usehooks-ts"
 import type * as z from "zod"
 import { toast } from "sonner"
-import axiosInstance from "@/lib/axiosInstance"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -55,7 +54,7 @@ const Page = () => {
         setIsCheckUsername(true)
         setUsernameMessage("")
         try {
-          const response = await axiosInstance.get(`/api/check-username-unique?username=${username}`)
+          const response = await axios.get(`/api/check-username-unique?username=${username}`)
           setUsernameMessage(response.data.message)
         } catch (error) {
           const errorMessage = axios.isAxiosError(error)
@@ -80,7 +79,7 @@ const Page = () => {
         phoneNumber,
       }
 
-      const response = await axiosInstance.post("/api/sign-up", payload)
+      const response = await axios.post("/api/sign-up", payload)
       toast.success("Success", {
         description: response.data.message,
       })

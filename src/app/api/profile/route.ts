@@ -92,7 +92,7 @@ export async function PUT(req: NextRequest) {
         profile, 
         children,
         profileCompletion: completionData // Now returns object
-      });
+      },{status : 200});
     } catch (error) {
       console.error("GET profile error:", error);
       return NextResponse.json({ success: false, message: "Failed to fetch profile" }, { status: 500 });

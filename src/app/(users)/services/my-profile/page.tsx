@@ -25,7 +25,7 @@ import {
   Home,
   UserCheck,
 } from "lucide-react"
-import axiosInstance from "@/lib/axiosInstance"
+import axios from "axios"
 
 interface ProfileData {
   fullName: string
@@ -65,7 +65,7 @@ export default function MyProfilePage() {
   const fetchProfile = async () => {
     setLoading(true)
     try {
-      const res = await axiosInstance.get("/api/my-profile", {
+      const res = await axios.get("/api/my-profile", {
         method: "GET",
         withCredentials: true,
       })
@@ -114,7 +114,7 @@ export default function MyProfilePage() {
   const handlePhoneSave = async () => {
     try {
       const formattedPhone = formatPhoneNumber(tempPhone);
-      await axiosInstance.put("/api/my-profile", { phoneNumber: formattedPhone });
+      await axios.put("/api/my-profile", { phoneNumber: formattedPhone });
       setProfileData((prev) => (prev ? { ...prev, phoneNumber: formattedPhone } : null));
       setEditingPhone(false);
     } catch (err) {
@@ -133,7 +133,7 @@ export default function MyProfilePage() {
 
   const handleAddressSave = async () => {
     try {
-      await axiosInstance.put("/api/my-profile", {
+      await axios.put("/api/my-profile", {
         address: tempAddress.address,
         city: tempAddress.city,
         state: tempAddress.state,

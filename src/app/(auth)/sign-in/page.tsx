@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type * as z from "zod"
 import { toast } from "sonner"
-import axiosInstance from "@/lib/axiosInstance"
 import { useRouter } from "next/navigation"
 import { signInSchema } from "@/schemas/signInSchema"
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -36,7 +35,7 @@ const SignInPage = () => {
     }
 
     try {
-      const response = await axiosInstance.post("/api/sign-in", payload, {
+      const response = await axios.post("/api/sign-in", payload, {
         withCredentials: true,
       })
 
