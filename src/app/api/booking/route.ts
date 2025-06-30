@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {  verifyRefreshToken } from "@/lib/auth";
+import {  verifyRefreshToken, verifyJWT } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createBookingSchema } from "@/schemas/bookingSchema";
 import { razorpay } from "@/lib/razorpay";
@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
     if (!token) {
       return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
     }
-    const user = await (await import("@/lib/auth")).verifyJWT(token);
+    const user = await verifyJWT(token);
     if (!user || user.role !== "ADMIN") {
       return NextResponse.json({ success: false, message: "Forbidden" }, { status: 403 });
     }

@@ -1,147 +1,101 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Users, UserCheck, UserX, Mail, Filter } from "lucide-react"
-// import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown"
-// import { ExportService } from "@/lib/export-utils"
+import {
+  Search,
+  Users,
+  Filter,
+  Eye,
+  User,
+  Phone,
+  Calendar,
+  BookOpen,
+  MapPin,
+  GraduationCap,
+  Heart,
+  Baby,
+} from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import axiosInstance from "@/lib/axiosInstance"
 
-// Mock data
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    joinDate: "2024-01-15",
-    totalBookings: 3,
-    totalSpent: 300,
-    status: "active",
-    lastLogin: "2024-02-01",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    joinDate: "2024-01-18",
-    totalBookings: 2,
-    totalSpent: 220,
-    status: "active",
-    lastLogin: "2024-01-30",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    joinDate: "2024-01-20",
-    totalBookings: 1,
-    totalSpent: 80,
-    status: "active",
-    lastLogin: "2024-01-28",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 4,
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    joinDate: "2024-01-22",
-    totalBookings: 4,
-    totalSpent: 380,
-    status: "active",
-    lastLogin: "2024-02-02",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 5,
-    name: "David Brown",
-    email: "david@example.com",
-    joinDate: "2024-01-25",
-    totalBookings: 0,
-    totalSpent: 0,
-    status: "active",
-    lastLogin: "2024-01-26",
-    hasCompletedBookings: false,
-  },
-  {
-    id: 6,
-    name: "Lisa Garcia",
-    email: "lisa@example.com",
-    joinDate: "2024-01-28",
-    totalBookings: 0,
-    totalSpent: 0,
-    status: "inactive",
-    lastLogin: "2024-01-29",
-    hasCompletedBookings: false,
-  },
-  {
-    id: 7,
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    joinDate: "2024-02-01",
-    totalBookings: 2,
-    totalSpent: 185,
-    status: "active",
-    lastLogin: "2024-02-05",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 8,
-    name: "Emma Davis",
-    email: "emma@example.com",
-    joinDate: "2024-02-03",
-    totalBookings: 1,
-    totalSpent: 110,
-    status: "active",
-    lastLogin: "2024-02-08",
-    hasCompletedBookings: true,
-  },
-  {
-    id: 9,
-    name: "Robert Wilson",
-    email: "robert@example.com",
-    joinDate: "2024-02-05",
-    totalBookings: 0,
-    totalSpent: 0,
-    status: "active",
-    lastLogin: "2024-02-10",
-    hasCompletedBookings: false,
-  },
-  {
-    id: 10,
-    name: "Sophie Brown",
-    email: "sophie@example.com",
-    joinDate: "2024-02-07",
-    totalBookings: 1,
-    totalSpent: 130,
-    status: "active",
-    lastLogin: "2024-02-12",
-    hasCompletedBookings: true,
-  },
-]
+interface UserInterface {
+  id: number
+  fullName: string
+  phoneNumber: string
+  createdAt: string
+  profile?: {
+    id: number
+    address: string
+    city: string
+    state: string
+    zipCode: string
+    highestEducation: string
+    relationToChild: string
+    counterpartnerName: string
+    counterpartnerPhoneNumber: string
+    counterpartnerEducation: string
+  }
+  children: Array<{
+    id: number
+    name: string
+    age: number
+    className: string
+    gender: string
+    createdAt: string
+  }>
+  _count: {
+    bookings: number
+  }
+}
 
 export default function UsersPage() {
+  const [users, setUsers] = useState<UserInterface[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [bookingFilter, setBookingFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null)
   const itemsPerPage = 5
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosInstance.get("/api/admin-users")
+      const data = await response.data
+
+      if (data.success) {
+        setUsers(data.data)
+      } else {
+        console.error("Failed to fetch users:", data.message)
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phoneNumber.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesBookingFilter =
       bookingFilter === "all" ||
-      (bookingFilter === "with-bookings" && user.hasCompletedBookings) ||
-      (bookingFilter === "no-bookings" && !user.hasCompletedBookings)
+      (bookingFilter === "with-bookings" && user._count.bookings > 0) ||
+      (bookingFilter === "no-bookings" && user._count.bookings === 0)
 
     return matchesSearch && matchesBookingFilter
   })
@@ -151,20 +105,34 @@ export default function UsersPage() {
   const paginatedUsers = filteredUsers.slice(startIndex, endIndex)
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
 
-  const stats = {
-    total: users.length,
-    active: users.filter((u) => u.status === "active").length,
-    inactive: users.filter((u) => u.status === "inactive").length,
-    totalRevenue: users.reduce((sum, u) => sum + u.totalSpent, 0),
-    avgSpentPerUser: users.reduce((sum, u) => sum + u.totalSpent, 0) / users.length,
-  }
-
-  const getInitials = (name : string): string => {
+  const getInitials = (name: string): string => {
     return name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-4 p-4 md:p-6">
+        <div className="flex items-center gap-4">
+          <SidebarTrigger />
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold">Users Management</h1>
+            <p className="text-muted-foreground">Loading users...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -177,60 +145,20 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {/* Stats Card */}
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1 max-w-xs">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inactive Users</CardTitle>
-            <UserX className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.inactive}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${stats.totalRevenue}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Spent</CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${Math.round(stats.avgSpentPerUser)}</div>
+            <div className="text-2xl font-bold">{users.length}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Search */}
+      {/* Search and Filters */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -256,10 +184,6 @@ export default function UsersPage() {
             </Select>
           </div>
         </div>
-        {/* <ExportDropdown
-          onExport={(format) => ExportService.exportUsersData(filteredUsers, format)}
-          label="Export Users"
-        /> */}
       </div>
 
       {/* Users Table */}
@@ -273,11 +197,9 @@ export default function UsersPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>User</TableHead>
+                <TableHead>Phone Number</TableHead>
                 <TableHead>Join Date</TableHead>
                 <TableHead>Total Bookings</TableHead>
-                <TableHead>Total Spent</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -288,35 +210,158 @@ export default function UsersPage() {
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={`/placeholder.svg?height=32&width=32`} />
-                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                        <AvatarFallback>{getInitials(user.fullName)}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{user.name}</div>
-                        <div className="text-sm text-muted-foreground">{user.email}</div>
+                        <div className="font-medium">{user.fullName}</div>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{user.joinDate}</TableCell>
+                  <TableCell className="font-medium">{user.phoneNumber}</TableCell>
+                  <TableCell>{formatDate(user.createdAt)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{user.totalBookings}</span>
+                      <span className="font-medium">{user._count.bookings}</span>
                       <span className="text-sm text-muted-foreground">bookings</span>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">${user.totalSpent}</TableCell>
-                  <TableCell>{user.lastLogin}</TableCell>
                   <TableCell>
-                    <Badge variant={user.status === "active" ? "default" : "secondary"}>{user.status}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Mail className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUser(user)}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            <User className="h-5 w-5" />
+                            User Details - {user.fullName}
+                          </DialogTitle>
+                        </DialogHeader>
+
+                        <div className="space-y-6">
+                          {/* Basic Information */}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                              <User className="h-4 w-4" />
+                              Basic Information
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Full Name:</span>
+                                <span>{user.fullName}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Phone:</span>
+                                <span>{user.phoneNumber}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Join Date:</span>
+                                <span>{formatDate(user.createdAt)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Total Bookings:</span>
+                                <Badge variant="secondary">{user._count.bookings}</Badge>
+                              </div>
+                            </div>
+                          </div>
+
+                          <Separator />
+
+                          {/* Profile Information */}
+                          {user.profile && (
+                            <div>
+                              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                Profile Information
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <span className="font-medium">Address:</span>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {user.profile.address}, {user.profile.city}, {user.profile.state}{" "}
+                                    {user.profile.zipCode}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Education:</span>
+                                  <span>{user.profile.highestEducation}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Heart className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Relation to Child:</span>
+                                  <span>{user.profile.relationToChild}</span>
+                                </div>
+                                {user.profile.counterpartnerName && (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <User className="h-4 w-4 text-muted-foreground" />
+                                      <span className="font-medium">Partner Name:</span>
+                                      <span>{user.profile.counterpartnerName}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Phone className="h-4 w-4 text-muted-foreground" />
+                                      <span className="font-medium">Partner Phone:</span>
+                                      <span>{user.profile.counterpartnerPhoneNumber}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                      <span className="font-medium">Partner Education:</span>
+                                      <span>{user.profile.counterpartnerEducation}</span>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          <Separator />
+
+                          {/* Children Information */}
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                              <Baby className="h-4 w-4" />
+                              Children ({user.children.length})
+                            </h3>
+                            {user.children.length > 0 ? (
+                              <div className="grid gap-4">
+                                {user.children.map((child) => (
+                                  <Card key={child.id} className="p-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                      <div>
+                                        <span className="font-medium">Name:</span>
+                                        <p className="text-sm text-muted-foreground">{child.name}</p>
+                                      </div>
+                                      <div>
+                                        <span className="font-medium">Age:</span>
+                                        <p className="text-sm text-muted-foreground">{child.age} years</p>
+                                      </div>
+                                      <div>
+                                        <span className="font-medium">Class:</span>
+                                        <p className="text-sm text-muted-foreground">{child.className}</p>
+                                      </div>
+                                      <div>
+                                        <span className="font-medium">Gender:</span>
+                                        <Badge variant="outline">{child.gender}</Badge>
+                                      </div>
+                                    </div>
+                                  </Card>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-muted-foreground">No children registered</p>
+                            )}
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               ))}
@@ -324,6 +369,8 @@ export default function UsersPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Pagination */}
       <div className="flex items-center justify-between px-2 py-4">
         <div className="text-sm text-muted-foreground">
           Showing {startIndex + 1} to {Math.min(endIndex, filteredUsers.length)} of {filteredUsers.length} results
