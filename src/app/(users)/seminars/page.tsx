@@ -55,6 +55,7 @@ import { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { openRazorpayCheckout } from "@/lib/razorpay_modal";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { PaymentSuccessModal } from "@/utilis/payment-success-modal"
 
 
 type Seminar = z.infer<typeof seminarSchema>;
@@ -355,6 +356,7 @@ export default function SeminarPage() {
   const [selectedSeminar, setSelectedSeminar] = useState<Seminar | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const user = useAuthStore((state) => state.user);
 
@@ -428,6 +430,7 @@ export default function SeminarPage() {
             email: user.email,
             phone: user.phoneNumber,
           },
+          onSuccess: () => setShowSuccessModal(true),
         });
       } else {
         alert(data.error);
@@ -921,6 +924,10 @@ export default function SeminarPage() {
           </DialogContent>
         </Dialog>
       </div>
+      <PaymentSuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+      />
     </div>
   );
 }
