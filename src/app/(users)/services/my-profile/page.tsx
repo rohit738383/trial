@@ -26,6 +26,7 @@ import {
   UserCheck,
 } from "lucide-react"
 import axios from "axios"
+import { useAuthStore } from "@/stores/useAuthStore"
 
 interface ProfileData {
   fullName: string
@@ -62,6 +63,8 @@ export default function MyProfilePage() {
     zipCode: "",
   })
 
+  const user = useAuthStore((state) => state.user)
+
   const fetchProfile = async () => {
     setLoading(true)
     try {
@@ -85,8 +88,10 @@ export default function MyProfilePage() {
   }
 
   useEffect(() => {
-    fetchProfile()
-  }, [])
+    if (user) {
+      fetchProfile()
+    }
+  }, [user])
 
   const formatPhoneNumber = (phone: string) => {
    
