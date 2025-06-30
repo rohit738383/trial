@@ -5,6 +5,7 @@ import { isAxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, Suspense } from 'react';
 import { Loader2 } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 function SilentRefreshContent() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function SilentRefreshContent() {
   const refreshLock = useRef(false);
   const retryCount = useRef(0);
   const maxRetries = 2;
+  const fetchUser = useAuthStore((state) => state.fetchUser);
   
   useEffect(() => {
     async function refreshTokens() {
@@ -42,9 +44,10 @@ function SilentRefreshContent() {
         console.log('[RefreshToken] Refresh token response status:', res.status);
 
         if (res.status === 200) {
-          console.log('[RefreshToken] Token refresh successful, redirecting...');
+          console.log('[RefreshToken] Token refresh successful, updating user and redirecting...');
+          await fetchUser();
           refreshLock.current = false;
-          window.location.replace(from);
+          router.replace(from);
           return;
         } else {
           console.warn('[RefreshToken] Token refresh returned unexpected status:', res.status);
@@ -86,7 +89,7 @@ function SilentRefreshContent() {
     return () => {
       refreshLock.current = false;
     };
-  }, [from, router]);
+  }, [from, router, fetchUser]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">
