@@ -44,7 +44,7 @@ function SilentRefreshContent() {
         if (res.status === 200) {
           console.log('[RefreshToken] Token refresh successful, redirecting...');
           refreshLock.current = false;
-          router.replace(from);
+          window.location.replace(from);
           return;
         } else {
           console.warn('[RefreshToken] Token refresh returned unexpected status:', res.status);
