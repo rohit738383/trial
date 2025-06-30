@@ -233,134 +233,136 @@ export default function UsersPage() {
                           View Details
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle className="flex items-center gap-2">
-                            <User className="h-5 w-5" />
-                            User Details - {user.fullName}
-                          </DialogTitle>
-                        </DialogHeader>
+                      {selectedUser && (
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <User className="h-5 w-5" />
+                              User Details - {selectedUser.fullName}
+                            </DialogTitle>
+                          </DialogHeader>
 
-                        <div className="space-y-6">
-                          {/* Basic Information */}
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                              <User className="h-4 w-4" />
-                              Basic Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="flex items-center gap-2">
-                                <User className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Full Name:</span>
-                                <span>{user.fullName}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Phone:</span>
-                                <span>{user.phoneNumber}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Join Date:</span>
-                                <span>{formatDate(user.createdAt)}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Total Bookings:</span>
-                                <Badge variant="secondary">{user._count.bookings}</Badge>
-                              </div>
-                            </div>
-                          </div>
-
-                          <Separator />
-
-                          {/* Profile Information */}
-                          {user.profile && (
+                          <div className="space-y-6">
+                            {/* Basic Information */}
                             <div>
                               <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                <MapPin className="h-4 w-4" />
-                                Profile Information
+                                <User className="h-4 w-4" />
+                                Basic Information
                               </h3>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                  <span className="font-medium">Address:</span>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    {user.profile.address}, {user.profile.city}, {user.profile.state}{" "}
-                                    {user.profile.zipCode}
-                                  </p>
+                                <div className="flex items-center gap-2">
+                                  <User className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Full Name:</span>
+                                  <span>{selectedUser.fullName}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                                  <span className="font-medium">Education:</span>
-                                  <span>{user.profile.highestEducation}</span>
+                                  <Phone className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Phone:</span>
+                                  <span>{selectedUser.phoneNumber}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <Heart className="h-4 w-4 text-muted-foreground" />
-                                  <span className="font-medium">Relation to Child:</span>
-                                  <span>{user.profile.relationToChild}</span>
+                                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Join Date:</span>
+                                  <span>{formatDate(selectedUser.createdAt)}</span>
                                 </div>
-                                {user.profile.counterpartnerName && (
-                                  <>
-                                    <div className="flex items-center gap-2">
-                                      <User className="h-4 w-4 text-muted-foreground" />
-                                      <span className="font-medium">Partner Name:</span>
-                                      <span>{user.profile.counterpartnerName}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="h-4 w-4 text-muted-foreground" />
-                                      <span className="font-medium">Partner Phone:</span>
-                                      <span>{user.profile.counterpartnerPhoneNumber}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                                      <span className="font-medium">Partner Education:</span>
-                                      <span>{user.profile.counterpartnerEducation}</span>
-                                    </div>
-                                  </>
-                                )}
+                                <div className="flex items-center gap-2">
+                                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                                  <span className="font-medium">Total Bookings:</span>
+                                  <Badge variant="secondary">{selectedUser._count.bookings}</Badge>
+                                </div>
                               </div>
                             </div>
-                          )}
 
-                          <Separator />
+                            <Separator />
 
-                          {/* Children Information */}
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                              <Baby className="h-4 w-4" />
-                              Children ({user.children.length})
-                            </h3>
-                            {user.children.length > 0 ? (
-                              <div className="grid gap-4">
-                                {user.children.map((child) => (
-                                  <Card key={child.id} className="p-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                      <div>
-                                        <span className="font-medium">Name:</span>
-                                        <p className="text-sm text-muted-foreground">{child.name}</p>
+                            {/* Profile Information */}
+                            {selectedUser.profile && (
+                              <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                  <MapPin className="h-4 w-4" />
+                                  Profile Information
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div>
+                                    <span className="font-medium">Address:</span>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      {selectedUser.profile.address}, {selectedUser.profile.city}, {selectedUser.profile.state}{" "}
+                                      {selectedUser.profile.zipCode}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Education:</span>
+                                    <span>{selectedUser.profile.highestEducation}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Heart className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Relation to Child:</span>
+                                    <span>{selectedUser.profile.relationToChild}</span>
+                                  </div>
+                                  {selectedUser.profile.counterpartnerName && (
+                                    <>
+                                      <div className="flex items-center gap-2">
+                                        <User className="h-4 w-4 text-muted-foreground" />
+                                        <span className="font-medium">Partner Name:</span>
+                                        <span>{selectedUser.profile.counterpartnerName}</span>
                                       </div>
-                                      <div>
-                                        <span className="font-medium">Age:</span>
-                                        <p className="text-sm text-muted-foreground">{child.age} years</p>
+                                      <div className="flex items-center gap-2">
+                                        <Phone className="h-4 w-4 text-muted-foreground" />
+                                        <span className="font-medium">Partner Phone:</span>
+                                        <span>{selectedUser.profile.counterpartnerPhoneNumber}</span>
                                       </div>
-                                      <div>
-                                        <span className="font-medium">Class:</span>
-                                        <p className="text-sm text-muted-foreground">{child.className}</p>
+                                      <div className="flex items-center gap-2">
+                                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                                        <span className="font-medium">Partner Education:</span>
+                                        <span>{selectedUser.profile.counterpartnerEducation}</span>
                                       </div>
-                                      <div>
-                                        <span className="font-medium">Gender:</span>
-                                        <Badge variant="outline">{child.gender}</Badge>
-                                      </div>
-                                    </div>
-                                  </Card>
-                                ))}
+                                    </>
+                                  )}
+                                </div>
                               </div>
-                            ) : (
-                              <p className="text-muted-foreground">No children registered</p>
                             )}
+
+                            <Separator />
+
+                            {/* Children Information */}
+                            <div>
+                              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                <Baby className="h-4 w-4" />
+                                Children ({selectedUser.children.length})
+                              </h3>
+                              {selectedUser.children.length > 0 ? (
+                                <div className="grid gap-4">
+                                  {selectedUser.children.map((child) => (
+                                    <Card key={child.id} className="p-4">
+                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div>
+                                          <span className="font-medium">Name:</span>
+                                          <p className="text-sm text-muted-foreground">{child.name}</p>
+                                        </div>
+                                        <div>
+                                          <span className="font-medium">Age:</span>
+                                          <p className="text-sm text-muted-foreground">{child.age} years</p>
+                                        </div>
+                                        <div>
+                                          <span className="font-medium">Class:</span>
+                                          <p className="text-sm text-muted-foreground">{child.className}</p>
+                                        </div>
+                                        <div>
+                                          <span className="font-medium">Gender:</span>
+                                          <Badge variant="outline">{child.gender}</Badge>
+                                        </div>
+                                      </div>
+                                    </Card>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-muted-foreground">No children registered</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </DialogContent>
+                        </DialogContent>
+                      )}
                     </Dialog>
                   </TableCell>
                 </TableRow>
