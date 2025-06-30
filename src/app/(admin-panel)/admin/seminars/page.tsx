@@ -40,13 +40,13 @@ import {
 } from "@/components/ui/select";
 import { Plus, Search, Edit, Trash2, Calendar } from "lucide-react";
 import { toast } from "sonner";
-// import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown";
-// import { ExportService } from "@/lib/export-utils";
 import axiosInstance from "@/lib/axiosInstance";
 import { seminarSchema } from "@/schemas/seminarSchema";
 import * as z from "zod";
 import { Seminar } from "@prisma/client";
 import type { AxiosError } from "axios";
+// import { ExportDropdown } from "@/app/(admin-panel)/components/export-dropdown";
+// import { ExportService } from "@/lib/export-utils";
 
 type SeminarFormData = z.infer<typeof seminarSchema> ;
 
@@ -69,14 +69,11 @@ export default function SeminarsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  // Fetch seminars
   useEffect(() => {
     const fetchSeminars = async () => {
       try {
         const res = await axiosInstance.get("/api/seminars");
         const seminarList = Array.isArray(res.data) ? res.data : [];
-
-        console.log("Fetched seminars:", seminarList);
         setSeminars(seminarList);
       } catch {
         toast.error("Failed to load seminars");
@@ -94,7 +91,6 @@ export default function SeminarsPage() {
     e.preventDefault();
     const parse = seminarSchema.safeParse(formData);
 
-    console.log("parse", parse);
     if (!parse.success) {
       toast.error("Validation failed", {
         description: parse.error.issues.map((i) => i.message).join(", "),
@@ -107,7 +103,6 @@ export default function SeminarsPage() {
       date: new Date(formData.date),
       price: formData.price,
     };
-    console.log("payload", payload);
 
     try {
       if (editingSeminar) {
@@ -171,7 +166,6 @@ export default function SeminarsPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-1">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -186,7 +180,6 @@ export default function SeminarsPage() {
         </Card>
       </div>
 
-      {/* Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -197,13 +190,20 @@ export default function SeminarsPage() {
             className="w-[300px]"
           />
         </div>
-        {/* <ExportDropdown
+
+    {/* <ExportDropdown
           onExport={(format) =>
             ExportService.exportSeminarsData(filteredSeminars, format)
           }
           label="Export Seminars"
         /> */}
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+
+        <Dialog open={isAddDialogOpen} onOpenChange={(isOpen) => {
+          if (isOpen && !editingSeminar) {
+            setFormData(defaultFormData);
+          }
+          setIsAddDialogOpen(isOpen);
+        }}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -234,8 +234,8 @@ export default function SeminarsPage() {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    value={formData.description}
                     style={{maxWidth: "465px"}}
+                    value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
@@ -355,7 +355,6 @@ export default function SeminarsPage() {
         </Dialog>
       </div>
 
-      {/* Seminars Table */}
       <Card>
         <CardHeader>
           <CardTitle>All Seminars</CardTitle>
