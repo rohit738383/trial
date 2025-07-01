@@ -2,62 +2,23 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import axios from "axios"
 
-const blogPosts = [
-  {
-    id: 1,
-    title: "The Future of Sustainable Living",
-    excerpt:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-    image: "/placeholder.svg?height=300&width=400",
-    date: "June 28, 2024",
-    slug: "future-sustainable-living",
-  },
-  {
-    id: 2,
-    title: "Earth Day Celebrations Around the World",
-    excerpt:
-      "It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: "/placeholder.svg?height=300&width=400",
-    date: "June 25, 2024",
-    slug: "earth-day-celebrations",
-  },
-  {
-    id: 3,
-    title: "Green Technology Innovations",
-    excerpt:
-      "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting.",
-    image: "/placeholder.svg?height=300&width=400",
-    date: "June 22, 2024",
-    slug: "green-technology-innovations",
-  },
-]
+// Server Component: fetch blogs from API
+async function getBlogs() {
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL }/api/blogs`)
+  if (res.status != 200) return []
+  return res.data
+}
 
-const recentPosts = [
-  {
-    id: 4,
-    title: "Climate Change Solutions",
-    image: "/placeholder.svg?height=80&width=80",
-    date: "June 20, 2024",
-    slug: "climate-change-solutions",
-  },
-  {
-    id: 5,
-    title: "Renewable Energy Trends",
-    image: "/placeholder.svg?height=80&width=80",
-    date: "June 18, 2024",
-    slug: "renewable-energy-trends",
-  },
-  {
-    id: 6,
-    title: "Eco-Friendly Lifestyle Tips",
-    image: "/placeholder.svg?height=80&width=80",
-    date: "June 15, 2024",
-    slug: "eco-friendly-lifestyle-tips",
-  },
-]
+function formatDate(dateString: string) {
+  const date = new Date(dateString)
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+}
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogs = await getBlogs()
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -78,27 +39,29 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Blog Posts */}
           <div className="lg:col-span-2 space-y-8">
-            {blogPosts.map((post) => (
+            {Array.isArray(blogs) && blogs.length > 0 ? blogs.map((post: any) => (
               <Card key={post.id} className="overflow-hidden shadow-lg">
                 <CardContent className="p-0">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                     <div className="relative h-64 md:h-full">
-                      <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
+                      <Image src={post.imageUrl || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
                     </div>
                     <div className="p-6 flex flex-col justify-between">
                       <div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-3">{post.title}</h2>
-                        <p className="text-gray-600 text-sm mb-2">{post.date}</p>
-                        <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4">{post.excerpt}</p>
+                        <p className="text-gray-600 text-sm mb-2">{formatDate(post.createdAt)}</p>
+                        <p className="text-gray-700 leading-relaxed mb-4 line-clamp-4">{post.content.slice(0, 180)}...</p>
                       </div>
-                      <Link href={`/blog/${post.slug}`}>
+                      <Link href={`/blogs/${post.slug}`}>
                         <Button className="bg-green-600 hover:bg-green-700 text-white">Read More</Button>
                       </Link>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )) : (
+              <div className="text-center text-gray-500">No blogs found.</div>
+            )}
           </div>
 
           {/* Sidebar - Recent Posts */}
@@ -107,12 +70,12 @@ export default function BlogPage() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-green-500">RECENT POST</h3>
                 <div className="space-y-4">
-                  {recentPosts.map((post) => (
-                    <Link key={post.id} href={`/blog/${post.slug}`}>
+                  {Array.isArray(blogs) && blogs.slice(0, 3).map((post: any) => (
+                    <Link key={post.id} href={`/blogs/${post.slug}`}>
                       <div className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                         <div className="relative w-16 h-16 flex-shrink-0">
                           <Image
-                            src={post.image || "/placeholder.svg"}
+                            src={post.imageUrl || "/placeholder.svg"}
                             alt={post.title}
                             fill
                             className="object-cover rounded"
@@ -120,7 +83,7 @@ export default function BlogPage() {
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-800 text-sm leading-tight mb-1">{post.title}</h4>
-                          <p className="text-xs text-gray-500">{post.date}</p>
+                          <p className="text-xs text-gray-500">{formatDate(post.createdAt)}</p>
                         </div>
                       </div>
                     </Link>
@@ -134,3 +97,4 @@ export default function BlogPage() {
     </div>
   )
 }
+

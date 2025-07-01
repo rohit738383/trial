@@ -1,6 +1,6 @@
 "use client"
 
-import { Calendar, Home, Settings, Users, BookOpen, LogOut, MessageSquare } from "lucide-react"
+import { Calendar, Home, Settings, Users, BookOpen, LogOut, MessageSquare, Pen } from "lucide-react"
 import Link from "next/link"
 import { usePathname , useRouter } from "next/navigation"
 import axios from "axios"
@@ -45,6 +45,11 @@ const menuItems = [
     title: "Inquiries",
     url: "/admin/inquiry",
     icon: MessageSquare,
+  },
+  {
+    title: "Blogs",
+    url: "/admin/blog",
+    icon: Pen,
   },
 ]
 
