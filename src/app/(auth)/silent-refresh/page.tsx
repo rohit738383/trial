@@ -47,7 +47,7 @@ function SilentRefreshContent() {
           console.log('[RefreshToken] Token refresh successful, updating user and redirecting...');
           await fetchUser();
           refreshLock.current = false;
-          router.replace(from);
+          window.location.replace(from);
           return;
         } else {
           console.warn('[RefreshToken] Token refresh returned unexpected status:', res.status);
