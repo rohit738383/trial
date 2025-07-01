@@ -25,7 +25,7 @@ async function getBlogs() {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL }/api/blogs`)
     if (res.status != 200) return []
     return res.data
-  } catch (error) {
+  } catch  {
      return [];
   }
 }
