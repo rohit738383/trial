@@ -1,13 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Brain, ChevronDown, ChevronUp, Menu, LogOut, User, Calendar } from "lucide-react"
+import { ChevronDown, ChevronUp, Menu, LogOut, User, Calendar } from "lucide-react"
 import { toast } from "sonner"
-// import Image from "next/image"
+import Image from "next/image"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -26,12 +25,10 @@ export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const router = useRouter()
-
   const user = useAuthStore((state) => state.user)
   console.log(user)
   const clearUser = useAuthStore((state) => state.clearUser)
   const fetchUser = useAuthStore((state) => state.fetchUser)
-
   const [servicesOpen, setServicesOpen] = useState(false)
 
   useEffect(() => {
@@ -67,7 +64,6 @@ export const Navigation = () => {
       .toUpperCase()
 
   const profileCompletion = user?.profileCompletion?.percentage ?? null
-
   const isLoading = user && profileCompletion === undefined
 
   const handleServiceClick = (e: React.MouseEvent) => {
@@ -83,15 +79,16 @@ export const Navigation = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur">
       <div className="flex h-16 items-center px-4 justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <Brain className="h-8 w-8 text-blue-600" />
-          {/* <Image
-                src="/logo.jpg?height=600&width=600"
-                alt="Students learning with technology"
-                width={90}
-                height={60}
-                className="rounded-2xl shadow-2xl  max-w-md sm:max-w-lg mx-auto"
-              /> */}
-          <span className="text-xl font-bold text-gray-900">Studytainment</span>
+          {/* <Brain className="h-8 w-8 text-blue-600" /> */}
+          <Image
+            src="/logo.png?height=50&width=120"
+            alt="Students learning with technology"
+            width={120}
+            height={40}
+            className="h-15 w-auto object-contain"
+            priority
+          />
+          {/* <span className="text-xl font-bold text-gray-900">Studytainment</span> */}
         </Link>
 
         {/* Desktop Navigation */}
@@ -213,7 +210,13 @@ export const Navigation = () => {
             <div className="h-full overflow-y-auto pb-20">
               <SheetHeader className="p-6">
                 <SheetTitle className="flex items-center space-x-2">
-                  <Brain className="h-6 w-6 text-blue-600" />
+                  <Image
+                    src="/placeholder.svg?height=24&width=24"
+                    alt="Studytainment Logo"
+                    width={24}
+                    height={24}
+                    className="h-6 w-6"
+                  />
                   <span>Studytainment</span>
                 </SheetTitle>
                 <SheetDescription>Navigate through our educational platform</SheetDescription>
@@ -251,13 +254,13 @@ export const Navigation = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full text-lg font-medium text-gray-900 hover:text-blue-600"
                   >
-                    <Button variant="outline" size="sm" className="w-full justify-start mb-2">
+                    <Button variant="outline" size="sm" className="w-full justify-start mb-2 bg-transparent">
                       <User className="mr-2 h-4 w-4" />
                       My Profile
                     </Button>
                   </Link>
                   <Link href="/services/your-seminar" onClick={() => setIsOpen(false)} className="w-full">
-                    <Button variant="outline" size="sm" className="w-full justify-start mb-2">
+                    <Button variant="outline" size="sm" className="w-full justify-start mb-2 bg-transparent">
                       <Calendar className="mr-2 h-4 w-4" />
                       Your Seminars
                     </Button>
@@ -280,11 +283,7 @@ export const Navigation = () => {
                     onClick={() => setServicesOpen((prev) => !prev)}
                   >
                     <span>Our Services</span>
-                    {servicesOpen ? (
-                      <ChevronUp className="ml-2 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    )}
+                    {servicesOpen ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
                   </button>
                   {servicesOpen && (
                     <div className="pl-4 space-y-2">
@@ -319,7 +318,7 @@ export const Navigation = () => {
                 {!user && (
                   <div className="flex flex-col space-y-2 pt-4 border-t">
                     <Link href="/sign-in" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full bg-transparent">
                         Login
                       </Button>
                     </Link>
@@ -333,7 +332,7 @@ export const Navigation = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-red-600 hover:text-red-700 mt-6"
+                    className="w-full text-red-600 hover:text-red-700 mt-6 bg-transparent"
                     onClick={() => {
                       handleLogout()
                       setIsOpen(false)
