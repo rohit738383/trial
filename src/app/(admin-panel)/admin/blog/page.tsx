@@ -121,13 +121,10 @@ export default function BlogsPage() {
         const formDataToSend = new FormData()
         formDataToSend.append("image", formData.image)
 
-        const uploadResponse = await fetch("/api/upload-image", {
-          method: "POST",
-          body: formDataToSend,
-        })
+        const uploadResponse = await axiosInstance.post("/api/upload-image", formDataToSend )
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json()
+        if (uploadResponse.status == 200) {
+          const uploadData = await uploadResponse.data
           imageUrl = uploadData.imageUrl
         } else {
           throw new Error("Image upload failed")
@@ -140,15 +137,9 @@ export default function BlogsPage() {
         imageUrl: imageUrl,
       }
 
-      const response = await fetch(`/api/blogs/${editingBlog.slug}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateData),
-      })
+      const response = await axiosInstance.put(`/api/blogs/${editingBlog.slug}`, updateData)
 
-      if (response.ok) {
+      if (response.status == 200) {
         toast.success("Blog updated successfully")
         setIsEditModalOpen(false)
         setEditingBlog(null)
