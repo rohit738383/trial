@@ -35,8 +35,8 @@ function formatDate(dateString: string) {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
 }
 
-export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const post = await getBlog(slug);
   const blogs = await getBlogs();
 
