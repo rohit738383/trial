@@ -40,7 +40,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   const post = await getBlog(slug);
   const blogs = await getBlogs();
 
-  if (!post || post.success === false) {
+  if (!post || !post.id) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
