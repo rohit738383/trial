@@ -15,7 +15,7 @@ type Blog = {
 };
 
 async function getBlog(slug: string) {
-  const res = await axios.get(`/api/blogs/${slug}`)
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/${slug}`)    
   if (res.status != 200) return null
   return res.data
 }
