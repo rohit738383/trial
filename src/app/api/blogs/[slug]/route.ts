@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { verifyJWT } from "@/lib/auth"
 import { blogSchema } from "@/schemas/blogSchema"
 import slugify from "slugify"
+import { Prisma } from "@prisma/client"
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   const blog = await prisma.blog.findUnique({
@@ -33,7 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
   const blog = await prisma.blog.findUnique({ where: { slug: params.slug } })
   if (!blog) return NextResponse.json({ success: false, message: "Blog not found" }, { status: 404 })
 
-  const updateData: any = {
+  const updateData: Prisma.BlogUpdateInput = {
     title: body.title,
     content: body.content,
     imageUrl: body.imageUrl,

@@ -4,6 +4,7 @@ import { verifyJWT } from "@/lib/auth"
 import cloudinary from "@/lib/cloudinary"
 import { blogSchema } from "@/schemas/blogSchema"
 import slugify from "slugify"
+import type { UploadApiResponse } from "cloudinary"
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get("accessToken")?.value
@@ -22,10 +23,10 @@ export async function POST(req: NextRequest) {
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
-  const uploaded = await new Promise<any>((resolve, reject) => {
+  const uploaded = await new Promise<UploadApiResponse>((resolve, reject) => {
     cloudinary.uploader.upload_stream({ folder: "blogs" }, (err, res) => {
       if (err) reject(err)
-      else resolve(res)
+      else resolve(res as UploadApiResponse)
     }).end(buffer)
   })
 

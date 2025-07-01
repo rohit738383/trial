@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import axiosInstance from "@/lib/axiosInstance"
+import Image from "next/image"
 
 interface BlogInterface {
   id: string
@@ -42,7 +43,6 @@ export default function BlogsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [selectedBlog, setSelectedBlog] = useState<BlogInterface | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingBlog, setEditingBlog] = useState<BlogInterface | null>(null)
@@ -342,9 +342,11 @@ export default function BlogsPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md overflow-hidden bg-muted">
-                        <img
+                        <Image
                           src={blog.imageUrl || "/placeholder.svg"}
                           alt={blog.title}
+                          width={48}
+                          height={48}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -364,7 +366,7 @@ export default function BlogsPage() {
                     <div className="flex items-center gap-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" onClick={() => setSelectedBlog(blog)}>
+                          <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -377,9 +379,11 @@ export default function BlogsPage() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <div className="w-full h-64 rounded-lg overflow-hidden">
-                              <img
+                              <Image
                                 src={blog.imageUrl || "/placeholder.svg"}
                                 alt={blog.title}
+                                width={800}
+                                height={256}
                                 className="w-full h-full object-cover"
                               />
                             </div>
@@ -413,7 +417,7 @@ export default function BlogsPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the blog post "{blog.title}".
+                              {"This action cannot be undone. This will permanently delete the blog post '{blog.title}'."}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -477,9 +481,11 @@ export default function BlogsPage() {
               <div>
                 <Label>Current Image</Label>
                 <div className="w-32 h-32 rounded-md overflow-hidden bg-muted">
-                  <img
+                  <Image
                     src={editingBlog.imageUrl || "/placeholder.svg"}
                     alt={editingBlog.title}
+                    width={128}
+                    height={128}
                     className="w-full h-full object-cover"
                   />
                 </div>

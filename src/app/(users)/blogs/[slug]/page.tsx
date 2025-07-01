@@ -5,6 +5,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Calendar } from "lucide-react"
 import axios from "axios"
 
+type Blog = {
+  id: string;
+  slug: string;
+  title: string;
+  imageUrl?: string;
+  createdAt: string;
+  content?: string;
+};
+
 async function getBlog(slug: string) {
   const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL }/api/blogs/${slug}`)
   if (res.status != 200) return null
@@ -98,7 +107,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-green-500">RECENT POST</h3>
                 <div className="space-y-4">
-                  {Array.isArray(blogs) && blogs.filter((b: any) => b.slug !== slug).slice(0, 3).map((post: any) => (
+                  {Array.isArray(blogs) && blogs.filter((b: Blog) => b.slug !== slug).slice(0, 3).map((post: Blog) => (
                     <Link key={post.id} href={`/blogs/${post.slug}`}>
                       <div className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                         <div className="relative w-16 h-16 flex-shrink-0">

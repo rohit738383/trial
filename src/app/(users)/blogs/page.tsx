@@ -4,6 +4,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import axios from "axios"
 
+// Blog interface for type safety
+interface Blog {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  slug: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 // Server Component: fetch blogs from API
 async function getBlogs() {
   const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL }/api/blogs`)
@@ -39,7 +50,7 @@ export default async function BlogPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Blog Posts */}
           <div className="lg:col-span-2 space-y-8">
-            {Array.isArray(blogs) && blogs.length > 0 ? blogs.map((post: any) => (
+            {Array.isArray(blogs) && blogs.length > 0 ? blogs.map((post: Blog) => (
               <Card key={post.id} className="overflow-hidden shadow-lg">
                 <CardContent className="p-0">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
@@ -70,7 +81,7 @@ export default async function BlogPage() {
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-green-500">RECENT POST</h3>
                 <div className="space-y-4">
-                  {Array.isArray(blogs) && blogs.slice(0, 3).map((post: any) => (
+                  {Array.isArray(blogs) && blogs.slice(0, 3).map((post: Blog) => (
                     <Link key={post.id} href={`/blogs/${post.slug}`}>
                       <div className="flex gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                         <div className="relative w-16 h-16 flex-shrink-0">
